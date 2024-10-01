@@ -1,6 +1,9 @@
+import 'package:my_workout/models/cardio_goal_progress.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal_progress.dart';
 import 'package:my_workout/models/program_exercise.dart';
+import 'package:my_workout/models/progress_status.dart';
+import 'package:my_workout/models/weight_goal_progress.dart';
 
 class ActivityExercise {
   String name = '';

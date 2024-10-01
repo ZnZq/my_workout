@@ -2,10 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:intl/intl.dart';
 import 'package:my_workout/models/activity_exercise.dart';
+import 'package:my_workout/models/cardio_goal_progress.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal_progress.dart';
 import 'package:my_workout/models/program.dart';
+import 'package:my_workout/models/progress_status.dart';
+import 'package:my_workout/models/weight_goal_progress.dart';
+import 'package:my_workout/models/weight_goal_progress_set.dart';
 import 'package:my_workout/utils.dart';
+import 'package:my_workout/widgets/activity_exercise_tab.dart';
+import 'package:my_workout/widgets/cardio_goal_progress_stats.dart';
+import 'package:my_workout/widgets/compact_button.dart';
+import 'package:my_workout/widgets/icon_text.dart';
+import 'package:my_workout/widgets/weight_goal_progress_set_tile.dart';
+import 'package:my_workout/widgets/weight_goal_progress_stats.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:timelines/timelines.dart';
@@ -35,10 +45,8 @@ class _ActivityPageState extends State<ActivityPage>
 
   @override
   void initState() {
-    // title with current date + program title
     date = DateTime.now();
     title = widget.program.title;
-    // title = '${} ${widget.program.title}';
     exercises.addAll(
       widget.program.exercises.map((e) => ActivityExercise.fromExercise(e)),
     );
@@ -54,18 +62,6 @@ class _ActivityPageState extends State<ActivityPage>
 
     super.dispose();
   }
-
-  // void _nextTab() {
-  //   if (_tabController.index < _tabController.length - 1) {
-  //     _tabController.animateTo(_tabController.index + 1);
-  //   }
-  // }
-
-  // void _previousTab() {
-  //   if (_tabController.index > 0) {
-  //     _tabController.animateTo(_tabController.index - 1);
-  //   }
-  // }
 
   void _runGoalProgress(ActivityExercise exercise, GoalProgress goal) {
     setState(() {
@@ -498,7 +494,7 @@ class _ActivityPageState extends State<ActivityPage>
               },
             ),
             Spacer(),
-            _buildCompactButton(
+            CompactButton(
               text: stopWatchTimer!.isRunning ? 'Pause' : 'Play',
               backgroundColor: Colors.blue,
               onPressed: goal.goal.duration == null ||
@@ -519,7 +515,7 @@ class _ActivityPageState extends State<ActivityPage>
                 goal.actual.duration!.inSeconds !=
                     goal.goal.duration!.inSeconds) ...[
               SizedBox(width: 8),
-              _buildCompactButton(
+              CompactButton(
                 text: goal.goal.duration == null ? 'Reset' : 'Finish',
                 backgroundColor: Colors.indigo,
                 onPressed: () {
@@ -550,10 +546,7 @@ class _ActivityPageState extends State<ActivityPage>
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Center(
-            child: _buildGoalStats(
-              goal,
-              wrapAlignment: WrapAlignment.center,
-            ),
+            child: _buildGoalStats(goal, wrapAlignment: WrapAlignment.center),
           ),
         ),
       ),
@@ -655,7 +648,6 @@ class _ActivityPageState extends State<ActivityPage>
                 child: Text('Complete set'),
               ),
             ],
-            // if (set.status == ProgressStatus.completed)
             if (set.status == ProgressStatus.completed) ...[
               if (set.endRestAt != null) ...[
                 Card(
@@ -749,7 +741,9 @@ class _ActivityPageState extends State<ActivityPage>
               isScrollable: true,
               tabAlignment: TabAlignment.center,
               labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-              tabs: exercises.map((e) => _buildExerciseTab(e)).toList(),
+              tabs: exercises
+                  .map((e) => ActivityExerciseTab(activityExercise: e))
+                  .toList(),
             ),
           ],
         ),
@@ -764,38 +758,19 @@ class _ActivityPageState extends State<ActivityPage>
     );
   }
 
-  Widget _buildExerciseTab(ActivityExercise e) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Tab(
-        child: Row(
-          children: [
-            Icon(
-              e.executeMethod.icon,
-              color: e.executeMethod.color,
-              size: 16,
-            ),
-            SizedBox(width: 4),
-            Text(e.name),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildExerciseView(BuildContext context, ActivityExercise exercise) {
     if (exercise.executeMethod == ExerciseExecuteMethod.weight) {
-      return _buildWeightExercise(context, exercise);
+      return _buildWeightExerciseView(context, exercise);
     }
 
     if (exercise.executeMethod == ExerciseExecuteMethod.cardio) {
-      return _buildCardioExercise(context, exercise);
+      return _buildCardioExerciseView(context, exercise);
     }
 
     return Center(child: Text('Not implemented'));
   }
 
-  Widget _buildCardioExercise(
+  Widget _buildCardioExerciseView(
     BuildContext context,
     ActivityExercise exercise,
   ) {
@@ -856,7 +831,7 @@ class _ActivityPageState extends State<ActivityPage>
     );
   }
 
-  Widget _buildWeightExercise(
+  Widget _buildWeightExerciseView(
     BuildContext context,
     ActivityExercise exercise,
   ) {
@@ -983,60 +958,49 @@ class _ActivityPageState extends State<ActivityPage>
   Widget _buildCardioGoalProgressBody(CardioGoalProgress goal) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (goal.actual.duration != null)
-          Row(
-            children: [
-              Icon(Icons.timer_sharp, color: Colors.blue, size: 16),
-              SizedBox(width: 4),
-              Text('Duration: ${formatDuration(goal.actual.duration!)}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Duration: ${formatDuration(goal.actual.duration!)}',
+            icon: Icons.timer_sharp,
+            iconColor: Colors.blue,
+            endGap: 8,
           ),
         if (goal.actual.heartRate != null)
-          Row(
-            children: [
-              Icon(Icons.favorite, color: Colors.red, size: 16),
-              SizedBox(width: 4),
-              Text('Heart rate: ${goal.actual.heartRate}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Heart rate: ${goal.actual.heartRate}',
+            icon: Icons.favorite,
+            iconColor: Colors.red,
+            endGap: 8,
           ),
         if (goal.actual.speed != null)
-          Row(
-            children: [
-              Icon(Icons.speed, color: Colors.orange, size: 16),
-              SizedBox(width: 4),
-              Text('Speed: ${goal.actual.speed!.toStringAsFixed(1)}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Speed: ${goal.actual.speed!.toStringAsFixed(1)}',
+            icon: Icons.speed,
+            iconColor: Colors.orange,
+            endGap: 8,
           ),
         if (goal.actual.distance != null)
-          Row(
-            children: [
-              Icon(Icons.location_on, color: Colors.indigo, size: 16),
-              SizedBox(width: 4),
-              Text('Distance: ${goal.actual.distance!.toStringAsFixed(1)}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Distance: ${goal.actual.distance!.toStringAsFixed(1)}',
+            icon: Icons.location_on,
+            iconColor: Colors.indigo,
+            endGap: 8,
           ),
         if (goal.actual.intensity != null)
-          Row(
-            children: [
-              Icon(Icons.bolt, color: Colors.green, size: 16),
-              SizedBox(width: 4),
-              Text('Intensity: ${goal.actual.intensity!.toStringAsFixed(1)}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Intensity: ${goal.actual.intensity!.toStringAsFixed(1)}',
+            icon: Icons.bolt,
+            iconColor: Colors.green,
+            endGap: 8,
           ),
         if (goal.actual.level != null)
-          Row(
-            children: [
-              Icon(Icons.leaderboard, color: Colors.yellow, size: 16),
-              SizedBox(width: 4),
-              Text('Level: ${goal.actual.level}'),
-              SizedBox(width: 8),
-            ],
+          IconText(
+            text: 'Level: ${goal.actual.level}',
+            icon: Icons.leaderboard,
+            iconColor: Colors.yellow,
+            endGap: 8,
           ),
       ],
     );
@@ -1057,7 +1021,7 @@ class _ActivityPageState extends State<ActivityPage>
         builder: TimelineTileBuilder.connected(
           itemCount: goal.sets.length,
           contentsBuilder: (context, index) {
-            return _buildWeightGoalProgressSet(context, goal, goal.sets[index]);
+            return WeightGoalProgressSetTile(goal: goal, set: goal.sets[index]);
           },
           connectorBuilder: (_, index, __) {
             final set = goal.sets[index];
@@ -1099,37 +1063,12 @@ class _ActivityPageState extends State<ActivityPage>
       children: [
         Expanded(child: _buildGoalStats(goal)),
         if (goal.status != ProgressStatus.completed)
-          _buildCompactButton(
+          CompactButton(
             text: 'Run',
             onPressed:
                 isRunEnabled ? () => _runGoalProgress(exercise, goal) : null,
           ),
       ],
-    );
-  }
-
-  Widget _buildCompactButton({
-    required String text,
-    Function()? onPressed,
-    Color backgroundColor = Colors.green,
-  }) {
-    final isEnabled = onPressed != null;
-    return Opacity(
-      opacity: isEnabled ? 1 : .5,
-      child: Container(
-        clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: InkWell(
-          onTap: isEnabled ? onPressed : null,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(text),
-          ),
-        ),
-      ),
     );
   }
 
@@ -1150,7 +1089,7 @@ class _ActivityPageState extends State<ActivityPage>
         if (goal.status != ProgressStatus.completed)
           Padding(
             padding: const EdgeInsets.only(bottom: 12),
-            child: _buildCompactButton(
+            child: CompactButton(
               text: 'Run',
               onPressed:
                   isRunEnabled ? () => _runGoalProgress(exercise, goal) : null,
@@ -1165,241 +1104,13 @@ class _ActivityPageState extends State<ActivityPage>
     WrapAlignment wrapAlignment = WrapAlignment.start,
   }) {
     if (goal is WeightGoalProgress) {
-      return _buildWeightGoalStats(goal, wrapAlignment: wrapAlignment);
+      return WeightGoalProgressStats(goal: goal, wrapAlignment: wrapAlignment);
     }
 
     if (goal is CardioGoalProgress) {
-      return _buildCardioGoalStats(goal, wrapAlignment: wrapAlignment);
+      return CardioGoalProgressStats(goal: goal, wrapAlignment: wrapAlignment);
     }
 
     return Center(child: Text('Not implemented'));
-  }
-
-  Widget _buildCardioGoalStats(
-    CardioGoalProgress goal, {
-    WrapAlignment wrapAlignment = WrapAlignment.start,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          alignment: wrapAlignment,
-          children: [
-            if (goal.goal.duration != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.timer_sharp, color: Colors.blue, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                      '${formatDuration(goal.actual.duration!)}/${formatDuration(goal.goal.duration!)}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-            if (goal.goal.heartRate != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.favorite, color: Colors.red, size: 16),
-                  SizedBox(width: 4),
-                  Text('${goal.actual.heartRate}/${goal.goal.heartRate}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-            if (goal.goal.speed != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.speed, color: Colors.orange, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                      '${goal.actual.speed!.toStringAsFixed(1)}/${goal.goal.speed!.toStringAsFixed(1)}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-            if (goal.goal.distance != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.location_on, color: Colors.indigo, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                      '${goal.actual.distance!.toStringAsFixed(1)}/${goal.goal.distance!.toStringAsFixed(1)}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-            if (goal.goal.intensity != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.bolt, color: Colors.green, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                      '${goal.actual.intensity!.toStringAsFixed(1)}/${goal.goal.intensity!.toStringAsFixed(1)}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-            if (goal.goal.level != null)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.leaderboard, color: Colors.yellow, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                      '${goal.actual.level!.toStringAsFixed(1)}/${goal.goal.level!.toStringAsFixed(1)}'),
-                  SizedBox(width: 8),
-                ],
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWeightGoalStats(
-    WeightGoalProgress goal, {
-    WrapAlignment wrapAlignment = WrapAlignment.start,
-  }) {
-    final completeSets = goal.completedSets;
-    final completeRepsCount = completeSets
-        .map((e) => e.reps / goal.goal.reps)
-        .fold(0.0, (a, b) => a + b);
-    final completedWeightTotal =
-        completeSets.map((e) => e.weight).fold(0.0, (a, b) => a + b);
-    final completedWeightAvg = completedWeightTotal == 0
-        ? 0
-        : completedWeightTotal / completeSets.length;
-
-    final completeRepsCountStr =
-        completeRepsCount.toStringAsFixed(completeRepsCount % 1 == 0 ? 0 : 1);
-
-    final maxComplete = goal.sets.length *
-        goal.goal.reps *
-        (goal.goal.weight == 0 ? 1 : goal.goal.weight);
-    final currentComplete = completeSets.length *
-        completeRepsCount *
-        (goal.goal.weight == 0 ? 1 : completedWeightAvg);
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          alignment: wrapAlignment,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.play_arrow, color: Colors.orange, size: 16),
-                SizedBox(width: 4),
-                Text('${completeSets.length}/${goal.sets.length}'),
-                SizedBox(width: 8),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.repeat, color: Colors.green, size: 16),
-                SizedBox(width: 4),
-                Text('$completeRepsCountStr/${goal.goal.reps}'),
-                SizedBox(width: 8),
-              ],
-            ),
-            if (goal.goal.weight != 0) ...[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.fitness_center, color: Colors.blue, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                    '${completedWeightAvg.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
-                  ),
-                  SizedBox(width: 8),
-                ],
-              ),
-            ],
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.query_stats, color: Colors.indigo, size: 16),
-                SizedBox(width: 4),
-                Text(
-                  'Goal completed by ${(currentComplete / maxComplete * 100).toStringAsFixed(2)}%',
-                ),
-              ],
-            ),
-          ],
-        )
-        // Row(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: [
-        //     Icon(Icons.play_arrow, color: Colors.orange, size: 16),
-        //     SizedBox(width: 4),
-        //     Text('${completeSets.length}/${goal.sets.length}'),
-        //     SizedBox(width: 8),
-        //     Icon(Icons.repeat, color: Colors.green, size: 16),
-        //     SizedBox(width: 4),
-        //     Text('$completeRepsCountStr/${goal.goal.reps}'),
-        //     if (goal.goal.weight != 0) ...[
-        //       SizedBox(width: 8),
-        //       Icon(Icons.fitness_center, color: Colors.blue, size: 16),
-        //       SizedBox(width: 4),
-        //       Text(
-        //         '${completedWeightAvg.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
-        //       ),
-        //     ],
-        //   ],
-        // ),
-        // Row(
-        //   mainAxisSize: MainAxisSize.min,
-        //   children: [
-        //     Icon(Icons.query_stats, color: Colors.indigo, size: 16),
-        //     SizedBox(width: 4),
-        //     Text(
-        //       'Goal completed by ${(currentComplete / maxComplete * 100).toStringAsFixed(2)}%',
-        //     )
-        //   ],
-        // )
-      ],
-    );
-  }
-
-  Widget _buildWeightGoalProgressSet(
-    BuildContext context,
-    WeightGoalProgress goal,
-    WeightGoalProgressSet set,
-  ) {
-    return Opacity(
-      opacity: set.status == ProgressStatus.completed ? 1 : .5,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.repeat, color: Colors.green, size: 16),
-                  SizedBox(width: 4),
-                  Text('Reps: ${set.reps.toString()}'),
-                  if (goal.goal.weight != 0) ...[
-                    SizedBox(width: 8),
-                    Icon(Icons.fitness_center, color: Colors.blue, size: 16),
-                    SizedBox(width: 4),
-                    Text('Weight: ${set.weight.toStringAsFixed(1)}'),
-                  ]
-                ],
-              ),
-            ),
-            Divider(height: 0),
-          ],
-        ),
-      ),
-    );
   }
 }
