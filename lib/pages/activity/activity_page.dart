@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
-import 'package:intl/intl.dart';
+import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/activity_exercise.dart';
 import 'package:my_workout/models/cardio_goal_progress.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal_progress.dart';
-import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
@@ -22,9 +21,9 @@ import 'package:timelines/timelines.dart';
 
 class ActivityPage extends StatefulWidget {
   static const route = '/activity';
-  final Program program;
+  final Activity activity;
 
-  const ActivityPage({super.key, required this.program});
+  const ActivityPage({super.key, required this.activity});
 
   @override
   State<ActivityPage> createState() => _ActivityPageState();
@@ -39,17 +38,14 @@ class _ActivityPageState extends State<ActivityPage>
   GoalProgress? selectedGoal;
   String title = 'New activity';
   DateTime date = DateTime.now();
-  DateFormat dateFormat = DateFormat('dd.MM.yyyy');
 
   final List<ActivityExercise> exercises = [];
 
   @override
   void initState() {
-    date = DateTime.now();
-    title = widget.program.title;
-    exercises.addAll(
-      widget.program.exercises.map((e) => ActivityExercise.fromExercise(e)),
-    );
+    date = widget.activity.date;
+    title = widget.activity.title;
+    exercises.addAll(widget.activity.exercises.map((e) => e.clone()));
 
     _tabController = TabController(length: exercises.length, vsync: this);
     super.initState();
@@ -61,6 +57,46 @@ class _ActivityPageState extends State<ActivityPage>
     stopWatchTimer?.dispose();
 
     super.dispose();
+  }
+
+  bool _isDirty() {
+    return buildActivity(false) != widget.activity;
+  }
+
+  void _onPopInvokedWithResult(
+    BuildContext context,
+    bool didPop,
+    dynamic result,
+  ) async {
+    if (didPop) {
+      return;
+    }
+
+    final isDirty = _isDirty();
+    Navigator.of(context).pop(isDirty ? buildActivity(true) : null);
+  }
+
+  Activity buildActivity(bool withClone) {
+    return Activity(
+      id: widget.activity.id,
+      date: date,
+      title: title,
+      status: getActivityStatus(),
+      exercises:
+          withClone ? exercises.map((e) => e.clone()).toList() : exercises,
+    );
+  }
+
+  ProgressStatus getActivityStatus() {
+    if (exercises.every((e) => e.status == ProgressStatus.completed)) {
+      return ProgressStatus.completed;
+    }
+
+    if (exercises.any((e) => e.status != ProgressStatus.planned)) {
+      return ProgressStatus.inProgress;
+    }
+
+    return ProgressStatus.planned;
   }
 
   void _runGoalProgress(ActivityExercise exercise, GoalProgress goal) {
@@ -125,22 +161,34 @@ class _ActivityPageState extends State<ActivityPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(dateFormat.format(date)),
-            SizedBox(width: 8),
-            Text(title),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        _onPopInvokedWithResult(context, didPop, result);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Text(dateFormat.format(date)),
+              // SizedBox(width: 8),
+              Text(title),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {},
+            ),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(child: _buildActiveExercise(context)),
-          Expanded(child: _buildExercises(context)),
-        ],
+        body: Column(
+          children: [
+            Expanded(child: _buildActiveExercise(context)),
+            Expanded(child: _buildExercises(context)),
+          ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:my_workout/models/activity.dart';
+import 'package:my_workout/storage/activity_storage.dart';
 import 'package:path/path.dart' as p;
 
 import 'package:flutter/foundation.dart';
@@ -9,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 
 class Storage {
   static late final ProgramStorage programStorage;
+  static late final ActivityStorage activityStorage;
 
   static Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -20,10 +23,18 @@ class Storage {
     return p.join(path, 'programs.json');
   }
 
+  static Future<String> get activityPath async {
+    final path = await localPath;
+    return p.join(path, 'activities.json');
+  }
+
   static Future<void> initialize() async {
     final programs = await readPrograms();
+    final activities = await readActivities();
 
     programStorage = ProgramStorage(programs)..addListener(_onSavePrograms);
+    activityStorage = ActivityStorage(activities)
+      ..addListener(_onSaveActivities);
   }
 
   static void _onSavePrograms() async {
@@ -31,6 +42,13 @@ class Storage {
     final path = await programPath;
 
     writeJson(path, programs);
+  }
+
+  static void _onSaveActivities() async {
+    final activities = activityStorage.items;
+    final path = await activityPath;
+
+    writeJson(path, activities);
   }
 
   static Future<List<Program>> readPrograms() async {
@@ -41,6 +59,18 @@ class Storage {
         rawPrograms.map((e) => Program.fromJson(e)).cast<Program>().toList();
 
     return programs;
+  }
+
+  static Future<List<Activity>> readActivities() async {
+    final path = await activityPath;
+    final rawActivities = await readJson<List<dynamic>>(path, []);
+
+    final activities = rawActivities
+        .map((e) => Activity.fromJson(e))
+        .cast<Activity>()
+        .toList();
+
+    return activities;
   }
 
   static Future<T> readJson<T>(String path, T defaultValue) async {

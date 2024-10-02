@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
 import 'package:my_workout/pages/activity/actvities_page.dart';
@@ -38,9 +39,9 @@ class MainApp extends StatelessWidget {
           );
         }
         if (settings.name == ActivityPage.route && settings.arguments != null) {
-          final program = settings.arguments as Program;
-          return MaterialPageRoute(
-            builder: (context) => ActivityPage(program: program),
+          final activity = settings.arguments as Activity;
+          return MaterialPageRoute<Activity?>(
+            builder: (context) => ActivityPage(activity: activity),
           );
         }
 
