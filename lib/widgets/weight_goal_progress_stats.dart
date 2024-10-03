@@ -15,14 +15,15 @@ class WeightGoalProgressStats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final completeSets = goal.completedSets;
-    final completeRepsCount = completeSets
-        .map((e) => e.reps / goal.goal.reps)
-        .fold(0.0, (a, b) => a + b);
+    final completeRepsTotal =
+        completeSets.map((e) => e.reps).fold(0.0, (a, b) => a + b);
     final completedWeightTotal =
         completeSets.map((e) => e.weight).fold(0.0, (a, b) => a + b);
     final completedWeightAvg = completedWeightTotal == 0
         ? 0
         : completedWeightTotal / completeSets.length;
+
+    final completeRepsCount = completeRepsTotal / completeSets.length;
 
     final completeRepsCountStr =
         completeRepsCount.toStringAsFixed(completeRepsCount % 1 == 0 ? 0 : 1);
@@ -31,7 +32,7 @@ class WeightGoalProgressStats extends StatelessWidget {
         goal.goal.reps *
         (goal.goal.weight == 0 ? 1 : goal.goal.weight);
     final currentComplete = completeSets.length *
-        completeRepsCount *
+        completeRepsTotal *
         (goal.goal.weight == 0 ? 1 : completedWeightAvg);
 
     return Column(

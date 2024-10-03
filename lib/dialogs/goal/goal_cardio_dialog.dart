@@ -225,6 +225,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
     final level = useLevel && this.level != minLevel ? this.level : null;
 
     return CardioGoal(
+      id: widget.goal.id,
       duration: duration,
       heartRate: heartRate,
       speed: speed,

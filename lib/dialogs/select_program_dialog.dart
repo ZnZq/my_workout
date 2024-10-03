@@ -3,7 +3,9 @@ import 'package:my_workout/models/program.dart';
 import 'package:my_workout/storage/storage.dart';
 
 class SelectProgramDialog extends StatelessWidget {
-  const SelectProgramDialog({super.key});
+  final Widget? firstItem;
+
+  const SelectProgramDialog({super.key, this.firstItem});
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +14,14 @@ class SelectProgramDialog extends StatelessWidget {
       content: SizedBox(
         height: 300,
         width: double.maxFinite,
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: Storage.programStorage.items.length,
-          itemBuilder: (context, index) {
-            final program = Storage.programStorage.items[index];
-            return _buildProgramCard(context, program, index);
-          },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              if (firstItem != null) firstItem!,
+              for (final program in Storage.programStorage.items)
+                _buildProgramCard(context, program),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -32,7 +35,7 @@ class SelectProgramDialog extends StatelessWidget {
     );
   }
 
-  Widget _buildProgramCard(BuildContext context, Program program, int index) {
+  Widget _buildProgramCard(BuildContext context, Program program) {
     return Card(
       clipBehavior: Clip.hardEdge,
       child: ListTile(

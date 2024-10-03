@@ -3,6 +3,9 @@ import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal.dart';
 import 'package:my_workout/models/program_exercise.dart';
 import 'package:my_workout/utils.dart';
+import 'package:my_workout/widgets/cardio_goal_tile.dart';
+import 'package:my_workout/widgets/icon_text.dart';
+import 'package:my_workout/widgets/weight_goal_tile.dart';
 
 class ProgramExerciseDialog extends StatefulWidget {
   final ProgramExercise programExercise;
@@ -72,7 +75,10 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                         for (var value in ExerciseExecuteMethod.values)
                           ButtonSegment<ExerciseExecuteMethod>(
                             value: value,
-                            label: Text(value.name),
+                            label: IconText(
+                                text: value.name,
+                                icon: value.icon,
+                                iconColor: value.color),
                             enabled: widget.canChangeExecuteMethod
                                 ? true
                                 : value == executeMethod,
@@ -138,59 +144,13 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                             onDismissed: (direction) {
                               setState(() => goals.remove(goal));
                             },
-                            child: InkWell(
-                              onTap: () async {
-                                final newGoal = await goalDialog(context, goal);
-                                if (newGoal != null) {
-                                  final index = goals.indexOf(goal);
-                                  setState(() => goals[index] = newGoal);
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 12,
-                                  top: 8,
-                                  bottom: 8,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (goal is WeightGoal) ...[
-                                          Text(
-                                              'Sets: ${goal.sets}, Reps: ${goal.reps}, Rest: ${formatDuration(goal.rest)}'),
-                                          if (goal.weight > 0)
-                                            Text(
-                                                'Weight: ${goal.weight.toStringAsFixed(1)}'),
-                                        ],
-                                        if (goal is CardioGoal) ...[
-                                          if (goal.duration != null)
-                                            Text(
-                                                'Duration: ${formatDuration(goal.duration!)}'),
-                                          if (goal.heartRate != null)
-                                            Text(
-                                                'Heart rate: ${goal.heartRate}'),
-                                          if (goal.speed != null)
-                                            Text(
-                                                'Speed: ${goal.speed!.toStringAsFixed(1)}'),
-                                          if (goal.distance != null)
-                                            Text(
-                                                'Distance: ${goal.distance!.toStringAsFixed(1)}'),
-                                          if (goal.intensity != null)
-                                            Text(
-                                                'Intensity: ${goal.intensity!.toStringAsFixed(1)}'),
-                                          if (goal.level != null)
-                                            Text(
-                                                'Level: ${goal.level!.toStringAsFixed(1)}'),
-                                        ],
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: goal is WeightGoal
+                                ? WeightGoalTile(
+                                    goal: goal, goalEdited: _onGoalEdited)
+                                : goal is CardioGoal
+                                    ? CardioGoalTile(
+                                        goal: goal, goalEdited: _onGoalEdited)
+                                    : Text('WTF???'),
                           ),
                         ),
                     ],
@@ -225,5 +185,10 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
         ),
       ],
     );
+  }
+
+  void _onGoalEdited(Goal goal) {
+    final index = goals.indexOf(goal);
+    setState(() => goals[index] = goal);
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:my_workout/dialogs/activity_exercises_dialog.dart';
+import 'package:my_workout/dialogs/weight_goal_progress_set_dialog.dart';
 import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/activity_exercise.dart';
 import 'package:my_workout/models/cardio_goal_progress.dart';
@@ -36,7 +38,7 @@ class _ActivityPageState extends State<ActivityPage>
   StopWatchTimer? stopWatchTimer;
   ActivityExercise? selectedExercise;
   GoalProgress? selectedGoal;
-  String title = 'New activity';
+  String title = '';
   DateTime date = DateTime.now();
 
   final List<ActivityExercise> exercises = [];
@@ -99,7 +101,7 @@ class _ActivityPageState extends State<ActivityPage>
     return ProgressStatus.planned;
   }
 
-  void _runGoalProgress(ActivityExercise exercise, GoalProgress goal) {
+  void _runGoalProgress(ActivityExercise? exercise, GoalProgress? goal) {
     setState(() {
       stopWatchTimer?.onStopTimer();
       stopWatchTimer?.dispose();
@@ -168,18 +170,13 @@ class _ActivityPageState extends State<ActivityPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Text(dateFormat.format(date)),
-              // SizedBox(width: 8),
-              Text(title),
-            ],
-          ),
+          title: Text(title),
           actions: [
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {},
+              onPressed: () {
+                /// todo
+              },
             ),
           ],
         ),
@@ -721,9 +718,18 @@ class _ActivityPageState extends State<ActivityPage>
               ],
               ElevatedButton(
                 onPressed: () {
-                  setState(() => set.isDone = true);
+                  setState(() {
+                    set.isDone = true;
+                    if (set == goal.sets.last) {
+                      goal.sets.add(WeightGoalProgressSet(
+                        reps: 0,
+                        weight: 0,
+                        status: ProgressStatus.planned,
+                      ));
+                    }
+                  });
                 },
-                child: Text('Next set'),
+                child: Text(set == goal.sets.last ? 'Add set' : 'Next set'),
               ),
             ]
           ],
@@ -742,32 +748,47 @@ class _ActivityPageState extends State<ActivityPage>
         margin: EdgeInsets.zero,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    size: 20,
-                    selectedExercise!.executeMethod.icon,
-                    color: selectedExercise!.executeMethod.color,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        size: 20,
+                        selectedExercise!.executeMethod.icon,
+                        color: selectedExercise!.executeMethod.color,
+                      ),
+                      SizedBox(width: 8),
+                      Text(selectedExercise!.name),
+                    ],
                   ),
-                  SizedBox(width: 8),
-                  Text(selectedExercise!.name),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          'Goal #${selectedExercise!.goalProgress.indexOf(goal) + 1} of ${selectedExercise!.goalProgress.length}'),
+                      SizedBox(width: 12),
+                      if (goal is WeightGoalProgress && set != null)
+                        Text(
+                            'Set #${goal.sets.indexOf(set) + 1} of ${goal.sets.length}')
+                    ],
+                  )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                      'Goal #${selectedExercise!.goalProgress.indexOf(goal) + 1} of ${selectedExercise!.goalProgress.length}'),
-                  SizedBox(width: 12),
-                  if (goal is WeightGoalProgress && set != null)
-                    Text(
-                        'Set #${goal.sets.indexOf(set) + 1} of ${goal.sets.length}')
-                ],
-              )
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 0,
+                child: IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    _runGoalProgress(null, null);
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -783,15 +804,39 @@ class _ActivityPageState extends State<ActivityPage>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Divider(height: 0),
-            TabBar(
-              controller: _tabController,
-              physics: const NeverScrollableScrollPhysics(),
-              isScrollable: true,
-              tabAlignment: TabAlignment.center,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-              tabs: exercises
-                  .map((e) => ActivityExerciseTab(activityExercise: e))
-                  .toList(),
+            Row(
+              children: [
+                Expanded(
+                  child: TabBar(
+                    controller: _tabController,
+                    dividerHeight: 0,
+                    physics: const NeverScrollableScrollPhysics(),
+                    isScrollable: true,
+                    tabAlignment: TabAlignment.center,
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                    tabs: exercises
+                        .map((e) => ActivityExerciseTab(activityExercise: e))
+                        .toList(),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () async {
+                    await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return ActivityExercisesDialog(exercises: exercises);
+                      },
+                    );
+
+                    setState(() {});
+                  },
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: Divider(height: 0),
             ),
           ],
         ),
@@ -970,8 +1015,43 @@ class _ActivityPageState extends State<ActivityPage>
             SizedBox(height: 4),
             _buildWeightGoalProgressHeader(exercise, goal),
             Divider(),
-            _buildWeightGoalProgressBody(goal)
+            _buildWeightGoalProgressBody(goal),
+            _buildWeightGoalProgressAddSet(goal)
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeightGoalProgressAddSet(WeightGoalProgress goal) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2),
+      child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        onTap: () {
+          setState(() {
+            goal.sets.add(WeightGoalProgressSet(
+              reps: 0,
+              weight: 0,
+              status: ProgressStatus.planned,
+            ));
+          });
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(left: 2),
+          child: Row(
+            children: const [
+              DotIndicator(
+                size: 16,
+                color: Colors.green,
+                child: Icon(Icons.add, color: Colors.white, size: 8),
+              ),
+              SizedBox(width: 12),
+              Text('Add set'),
+            ],
+          ),
         ),
       ),
     );
@@ -1054,6 +1134,39 @@ class _ActivityPageState extends State<ActivityPage>
     );
   }
 
+  Widget _buildDeleteWeightGoalProgressSet(WeightGoalProgress goal, int index) {
+    return InkWell(
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      onTap: () {
+        setState(() {
+          goal.sets.removeAt(index);
+        });
+      },
+      child: Icon(Icons.close, color: Colors.red, size: 16),
+    );
+  }
+
+  Widget _buildEditWeightGoalProgressSet(WeightGoalProgress goal, int index) {
+    final set = goal.sets[index];
+    return InkWell(
+      customBorder: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      onTap: () async {
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return WeightGoalProgressSetDialog(set: set);
+          },
+        );
+        setState(() {});
+      },
+      child: Icon(Icons.edit, color: Colors.blue, size: 16),
+    );
+  }
+
   Widget _buildWeightGoalProgressBody(WeightGoalProgress goal) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 4),
@@ -1069,7 +1182,17 @@ class _ActivityPageState extends State<ActivityPage>
         builder: TimelineTileBuilder.connected(
           itemCount: goal.sets.length,
           contentsBuilder: (context, index) {
-            return WeightGoalProgressSetTile(goal: goal, set: goal.sets[index]);
+            final set = goal.sets[index];
+            return WeightGoalProgressSetTile(
+              goal: goal,
+              set: set,
+              action: set.status == ProgressStatus.completed
+                  ? _buildEditWeightGoalProgressSet(goal, index)
+                  : (set.status == ProgressStatus.planned &&
+                          index > goal.goal.sets - 1
+                      ? _buildDeleteWeightGoalProgressSet(goal, index)
+                      : null),
+            );
           },
           connectorBuilder: (_, index, __) {
             final set = goal.sets[index];

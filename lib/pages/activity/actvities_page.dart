@@ -83,10 +83,21 @@ class ActvitiesPage extends StatelessWidget {
   }
 
   void _addActivity(BuildContext context) async {
-    final program = await showDialog<Program>(
+    final program = await showDialog<Program?>(
       context: context,
       builder: (context) {
-        return const SelectProgramDialog();
+        return SelectProgramDialog(
+          firstItem: Card(
+            clipBehavior: Clip.hardEdge,
+            color: Colors.green,
+            child: ListTile(
+              title: Center(child: Text('Without program')),
+              onTap: () {
+                Navigator.of(context).pop(Program.empty());
+              },
+            ),
+          ),
+        );
       },
     );
 

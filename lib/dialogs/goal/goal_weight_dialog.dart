@@ -197,6 +197,7 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
         TextButton(
           onPressed: () {
             Navigator.of(context).pop(WeightGoal(
+              id: widget.goal.id,
               sets: sets,
               reps: reps,
               weight: weight,
