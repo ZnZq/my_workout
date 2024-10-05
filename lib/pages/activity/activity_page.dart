@@ -32,7 +32,7 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
   StopWatchTimer? stopWatchTimer;
@@ -50,6 +50,11 @@ class _ActivityPageState extends State<ActivityPage>
     exercises.addAll(widget.activity.exercises.map((e) => e.clone()));
 
     _tabController = TabController(length: exercises.length, vsync: this);
+
+    if (title.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _editInfo());
+    }
+
     super.initState();
   }
 
@@ -78,6 +83,15 @@ class _ActivityPageState extends State<ActivityPage>
     Navigator.of(context).pop(isDirty ? buildActivity(true) : null);
   }
 
+  void _editInfo() async {
+    var programInfo = await infoDialog(context, title, showDescription: false);
+    if (programInfo != null) {
+      setState(() {
+        title = programInfo['title']!;
+      });
+    }
+  }
+
   Activity buildActivity(bool withClone) {
     return Activity(
       id: widget.activity.id,
@@ -90,6 +104,10 @@ class _ActivityPageState extends State<ActivityPage>
   }
 
   ProgressStatus getActivityStatus() {
+    if (exercises.isEmpty) {
+      return ProgressStatus.planned;
+    }
+
     if (exercises.every((e) => e.status == ProgressStatus.completed)) {
       return ProgressStatus.completed;
     }
@@ -174,9 +192,7 @@ class _ActivityPageState extends State<ActivityPage>
           actions: [
             IconButton(
               icon: Icon(Icons.edit),
-              onPressed: () {
-                /// todo
-              },
+              onPressed: _editInfo,
             ),
           ],
         ),
@@ -829,7 +845,16 @@ class _ActivityPageState extends State<ActivityPage>
                       },
                     );
 
-                    setState(() {});
+                    for (var e in exercises) {
+                      e.actualizeSets();
+                    }
+
+                    setState(() {
+                      _tabController = TabController(
+                        length: exercises.length,
+                        vsync: this,
+                      );
+                    });
                   },
                 ),
               ],

@@ -3,6 +3,7 @@ import 'package:my_workout/dialogs/goal_progresses_dialog.dart';
 import 'package:my_workout/models/activity_exercise.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/utils.dart';
+import 'package:my_workout/widgets/icon_text.dart';
 
 class ActivityExercisesDialog extends StatefulWidget {
   final List<ActivityExercise> exercises;
@@ -22,9 +23,48 @@ class _ActivityExercisesDialogState extends State<ActivityExercisesDialog> {
         children: [
           Text('Activity exercises'),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {},
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return [
+                for (final method in ExerciseExecuteMethod.values)
+                  PopupMenuItem(
+                    value: method,
+                    child: IconText(
+                        text: method.name,
+                        icon: method.icon,
+                        iconColor: method.color),
+                  ),
+              ];
+            },
+            child: const Icon(Icons.add),
+            onSelected: (value) async {
+              final exersiseName =
+                  await textInputDialog(context, 'Enter execrcise name');
+              if (exersiseName == null) {
+                return;
+              }
+
+              final exercise = ActivityExercise(
+                name: exersiseName,
+                executeMethod: value,
+                goalProgress: [],
+              );
+
+              if (!context.mounted) {
+                return;
+              }
+
+              await showDialog(
+                context: context,
+                builder: (context) {
+                  return GoalProgressesDialog(exercise: exercise);
+                },
+              );
+
+              if (exercise.goalProgress.isNotEmpty) {
+                setState(() => widget.exercises.add(exercise));
+              }
+            },
           ),
         ],
       ),
@@ -95,10 +135,7 @@ class _ActivityExercisesDialogState extends State<ActivityExercisesDialog> {
             await showDialog(
               context: context,
               builder: (context) {
-                return GoalProgressesDialog(
-                  executeMethod: exercise.executeMethod,
-                  goals: exercise.goalProgress,
-                );
+                return GoalProgressesDialog(exercise: exercise);
               },
             );
 

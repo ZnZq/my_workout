@@ -23,7 +23,10 @@ class WeightGoalProgressStats extends StatelessWidget {
         ? 0
         : completedWeightTotal / completeSets.length;
 
-    final completeRepsCount = completeRepsTotal / completeSets.length;
+    var completeRepsCount = completeRepsTotal / completeSets.length;
+    if (completeRepsCount.isNaN) {
+      completeRepsCount = 0;
+    }
 
     final completeRepsCountStr =
         completeRepsCount.toStringAsFixed(completeRepsCount % 1 == 0 ? 0 : 1);
@@ -32,7 +35,7 @@ class WeightGoalProgressStats extends StatelessWidget {
         goal.goal.reps *
         (goal.goal.weight == 0 ? 1 : goal.goal.weight);
     final currentComplete = completeSets.length *
-        completeRepsTotal *
+        completeRepsCount *
         (goal.goal.weight == 0 ? 1 : completedWeightAvg);
 
     return Column(
@@ -43,7 +46,7 @@ class WeightGoalProgressStats extends StatelessWidget {
           alignment: wrapAlignment,
           children: [
             IconText(
-              text: '${completeSets.length}/${goal.sets.length}',
+              text: '${completeSets.length}/${goal.goal.sets}',
               icon: Icons.play_arrow,
               iconColor: Colors.orange,
               endGap: 8,

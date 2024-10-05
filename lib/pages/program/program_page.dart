@@ -172,20 +172,12 @@ class _ProgramPageState extends State<ProgramPage> {
               context, 'Are you sure you want to delete ${exercise.name}?');
         },
         child: ListTile(
-          leading: Icon(exercise.executeMethod.icon),
-          title: Text(exercise.name),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: exercise.goals.indexed
-                .map(
-                  (entry) => Text(
-                    '${entry.$1 + 1}. ${entry.$2}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-                .toList(),
+          leading: Icon(
+            exercise.executeMethod.icon,
+            color: exercise.executeMethod.color,
           ),
+          title: Text(exercise.name),
+          subtitle: Text('Goal: ${exercise.goals.length}'),
           onTap: () => _editExercise(exercise),
         ),
       ),
@@ -237,7 +229,8 @@ class _ProgramPageState extends State<ProgramPage> {
   }
 
   void _editInfo() async {
-    var programInfo = await programInfoDialog(context, title, description);
+    var programInfo =
+        await infoDialog(context, title, description: description);
     if (programInfo != null) {
       setState(() {
         title = programInfo['title']!;

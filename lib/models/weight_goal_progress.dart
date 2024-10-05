@@ -15,6 +15,9 @@ class WeightGoalProgress extends GoalProgress<WeightGoal> with EquatableMixin {
 
   ProgressStatus get status {
     final completedSets = this.completedSets;
+    if (completedSets.length < goal.sets) {
+      return ProgressStatus.inProgress;
+    }
     if (completedSets.length == sets.length) {
       return ProgressStatus.completed;
     } else if (sets.any((s) => s.status != ProgressStatus.planned)) {
@@ -51,6 +54,14 @@ class WeightGoalProgress extends GoalProgress<WeightGoal> with EquatableMixin {
       sets: sets.map((e) => e.clone()).toList(),
       id: id,
     );
+  }
+
+  void actualizeSets() {
+    sets.removeWhere((element) => element.status == ProgressStatus.planned);
+    final toAdd = goal.sets - sets.length;
+    for (var i = 0; i < toAdd; i++) {
+      sets.add(WeightGoalProgressSet());
+    }
   }
 
   @override

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 
-class ProgramInfoDialog extends StatelessWidget {
+class InfoDialog extends StatelessWidget {
   late final TextEditingController titleController;
   late final TextEditingController descriptionController;
+  final bool showDescription;
   final _formKey = GlobalKey<FormState>();
 
-  ProgramInfoDialog({super.key, String title = '', String description = ''}) {
+  InfoDialog(
+      {super.key,
+      String title = '',
+      String description = '',
+      this.showDescription = true}) {
     titleController = TextEditingController(text: title);
     descriptionController = TextEditingController(text: description);
   }
@@ -13,7 +18,7 @@ class ProgramInfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Program Info'),
+      title: Text('Info'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -34,16 +39,17 @@ class ProgramInfoDialog extends StatelessWidget {
                 return null;
               },
             ),
-            TextFormField(
-              textCapitalization: TextCapitalization.words,
-              controller: descriptionController,
-              autofocus: false,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              decoration: InputDecoration(
-                labelText: 'Description',
+            if (showDescription)
+              TextFormField(
+                textCapitalization: TextCapitalization.words,
+                controller: descriptionController,
+                autofocus: false,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -67,7 +73,7 @@ class ProgramInfoDialog extends StatelessWidget {
 
     Navigator.of(context).pop({
       'title': titleController.text,
-      'description': descriptionController.text,
+      if (showDescription) 'description': descriptionController.text,
     });
   }
 }

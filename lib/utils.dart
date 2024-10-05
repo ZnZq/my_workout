@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_workout/dialogs/goal/goal_dialog.dart';
-import 'package:my_workout/dialogs/program_info_dialog.dart';
+import 'package:my_workout/dialogs/info_dialog.dart';
 import 'package:my_workout/dialogs/text_input_dialog.dart';
 import 'package:my_workout/dialogs/ask_dialog.dart';
 import 'package:my_workout/models/goal.dart';
@@ -11,15 +11,19 @@ extension MapExtension<K, V> on Map<K, V> {
   }
 }
 
-Future<Map<String, String>?> programInfoDialog(
+Future<Map<String, String>?> infoDialog(
   BuildContext context,
-  String title,
-  String description,
-) async {
+  String title, {
+  String description = '',
+  bool showDescription = true,
+}) async {
   var result = await showDialog(
     context: context,
     builder: (context) {
-      return ProgramInfoDialog(title: title, description: description);
+      return InfoDialog(
+          title: title,
+          description: description,
+          showDescription: showDescription);
     },
   );
 

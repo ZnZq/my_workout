@@ -84,7 +84,8 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
                 ElevatedButton(
                   style: elevatedButtonStyle,
                   onPressed: () => setState(
-                    () => sets = (sets + 10).clamp(minSets, maxSets),
+                    () => sets = (sets + (sets == minSets ? 9 : 10))
+                        .clamp(minSets, maxSets),
                   ),
                   child: Text('+10'),
                 ),
@@ -120,7 +121,8 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
                 ElevatedButton(
                   style: elevatedButtonStyle,
                   onPressed: () => setState(
-                    () => reps = (reps + 10).clamp(minReps, maxReps),
+                    () => reps = (reps + (reps == minReps ? 9 : 10))
+                        .clamp(minReps, maxReps),
                   ),
                   child: Text('+10'),
                 ),

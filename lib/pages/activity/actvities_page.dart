@@ -6,6 +6,7 @@ import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
 import 'package:my_workout/storage/storage.dart';
+import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/workout_app_bar.dart';
 import 'package:my_workout/widgets/workout_drawer.dart';
 
@@ -62,6 +63,12 @@ class ActvitiesPage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 16),
             child: const Icon(Icons.delete, color: Colors.white),
           ),
+          confirmDismiss: (direction) async {
+            return await askDialog(
+              context,
+              'Are you sure you want to delete ${activity.title}?',
+            );
+          },
           onDismissed: (direction) {
             Storage.activityStorage.remove(activity.id);
           },

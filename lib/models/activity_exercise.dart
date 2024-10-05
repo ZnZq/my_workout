@@ -25,7 +25,7 @@ class ActivityExercise with EquatableMixin {
   ActivityExercise({
     required this.name,
     required this.executeMethod,
-    this.goalProgress = const [],
+    required this.goalProgress,
     String? id,
   }) {
     this.id = id ?? uuid.v4();
@@ -55,6 +55,14 @@ class ActivityExercise with EquatableMixin {
     goalProgress = (json['goalProgress'] as List<dynamic>)
         .map((e) => GoalProgressFactory.fromJson(e))
         .toList();
+  }
+
+  void actualizeSets() {
+    for (var element in goalProgress) {
+      if (element is WeightGoalProgress) {
+        element.actualizeSets();
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
