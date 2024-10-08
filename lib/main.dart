@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart' as data;
 import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
@@ -12,6 +13,7 @@ import 'package:my_workout/storage/storage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await data.init();
   await Storage.initialize();
 
   runApp(const MainApp());

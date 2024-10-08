@@ -162,6 +162,11 @@ class _ActivityPageState extends State<ActivityPage>
     stopWatchTimer = StopWatchTimer(
       mode: mode,
       presetMillisecond: presetMillisecond,
+      onEnded: mode == StopWatchMode.countDown
+          ? () async {
+              await vibrateThreeTimes();
+            }
+          : null,
     );
     stopWatchTimer!.secondTime.listen((seconds) {
       setState(() {
@@ -724,6 +729,9 @@ class _ActivityPageState extends State<ActivityPage>
                           child: TimerCountdown(
                             format: CountDownTimerFormat.hoursMinutesSeconds,
                             endTime: set.endRestAt!,
+                            onEnd: () async {
+                              await vibrateThreeTimes();
+                            },
                           ),
                         )
                       ],
@@ -752,6 +760,14 @@ class _ActivityPageState extends State<ActivityPage>
         ),
       ),
     );
+  }
+
+  Future<void> vibrateThreeTimes() async {
+    await vibrate();
+    await Future.delayed(const Duration(milliseconds: 1000));
+    await vibrate();
+    await Future.delayed(const Duration(milliseconds: 1000));
+    await vibrate();
   }
 
   Widget _buildSelectedExerciseCard(

@@ -1,14 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/dialogs/goal/goal_dialog.dart';
 import 'package:my_workout/dialogs/info_dialog.dart';
 import 'package:my_workout/dialogs/text_input_dialog.dart';
 import 'package:my_workout/dialogs/ask_dialog.dart';
 import 'package:my_workout/models/goal.dart';
+import 'package:vibration/vibration.dart';
 
 extension MapExtension<K, V> on Map<K, V> {
   getOrDefault(K key, V defaultValue) {
     return containsKey(key) ? this[key] : defaultValue;
   }
+}
+
+Future<void> vibrate({
+  int duration = 500,
+  List<int> pattern = const [],
+  int repeat = -1,
+  List<int> intensities = const [],
+  int amplitude = -1,
+}) async {
+  if (!hasVibrator) {
+    return;
+  }
+
+  await Vibration.vibrate(
+      duration: duration,
+      pattern: pattern,
+      repeat: repeat,
+      intensities: intensities,
+      amplitude: amplitude);
 }
 
 Future<Map<String, String>?> infoDialog(
