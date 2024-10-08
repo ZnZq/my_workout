@@ -930,10 +930,20 @@ class _ActivityPageState extends State<ActivityPage>
                     }
 
                     setState(() {
+                      final currentTabIndex = _tabController.index;
                       _tabController = TabController(
                         length: exercises.length,
                         vsync: this,
                       );
+
+                      if (exercises.isEmpty) {
+                        return;
+                      }
+
+                      _tabController.animateTo(
+                          currentTabIndex >= exercises.length
+                              ? exercises.length - 1
+                              : currentTabIndex);
                     });
                   },
                 ),
