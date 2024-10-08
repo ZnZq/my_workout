@@ -31,7 +31,7 @@ class WeightGoalProgressStats extends StatelessWidget {
     final completeRepsCountStr =
         completeRepsCount.toStringAsFixed(completeRepsCount % 1 == 0 ? 0 : 1);
 
-    final maxComplete = goal.sets.length *
+    final maxComplete = goal.goal.sets *
         goal.goal.reps *
         (goal.goal.weight == 0 ? 1 : goal.goal.weight);
     final currentComplete = completeSets.length *

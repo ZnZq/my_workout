@@ -15,6 +15,7 @@ import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/activity_exercise_tab.dart';
 import 'package:my_workout/widgets/cardio_goal_progress_stats.dart';
 import 'package:my_workout/widgets/compact_button.dart';
+import 'package:my_workout/widgets/delayed_button.dart';
 import 'package:my_workout/widgets/icon_text.dart';
 import 'package:my_workout/widgets/weight_goal_progress_set_tile.dart';
 import 'package:my_workout/widgets/weight_goal_progress_stats.dart';
@@ -186,7 +187,9 @@ class _ActivityPageState extends State<ActivityPage>
       presetMillisecond: presetMillisecond,
       onEnded: mode == StopWatchMode.countDown
           ? () async {
-              await vibrateThreeTimes();
+              if (presetMillisecond != 0) {
+                await vibrateThreeTimes();
+              }
             }
           : null,
     );
@@ -751,9 +754,12 @@ class _ActivityPageState extends State<ActivityPage>
                           child: TimerCountdown(
                             format: CountDownTimerFormat.hoursMinutesSeconds,
                             endTime: set.endRestAt!,
-                            onEnd: () async {
-                              await vibrateThreeTimes();
-                            },
+                            onEnd: set.endRestAt!.isAfter(DateTime.now())
+                                ? () async {
+                                    await vibrateThreeTimes();
+                                    setState(() {});
+                                  }
+                                : null,
                           ),
                         )
                       ],
@@ -762,36 +768,62 @@ class _ActivityPageState extends State<ActivityPage>
                 ),
                 SizedBox(height: 4),
               ],
-              ElevatedButton(
-                onPressed: () async {
-                  // if set.endRestAt not null and set.endRestAt is not pass, then ask to skip rest
-                  if (set.endRestAt != null &&
-                      set.endRestAt!.isAfter(DateTime.now())) {
-                    final answer =
-                        await askDialog(context, 'Do you want to skip rest?');
-                    if (answer == false) {
-                      return;
-                    }
-                  }
-
-                  setState(() {
-                    set.isDone = true;
-                    if (set == goal.sets.last) {
-                      goal.sets.add(WeightGoalProgressSet(
-                        reps: 0,
-                        weight: 0,
-                        status: ProgressStatus.planned,
-                      ));
-                    }
-                  });
-                },
-                child: Text(set == goal.sets.last ? 'Add set' : 'Next set'),
-              ),
+              if (set == goal.sets.last)
+                ElevatedButton(
+                  onPressed: () async {
+                    preventSkipRest(set, () {
+                      setState(() {
+                        set.isDone = true;
+                        goal.sets.add(WeightGoalProgressSet(
+                          reps: 0,
+                          weight: 0,
+                          status: ProgressStatus.planned,
+                        ));
+                      });
+                    });
+                  },
+                  child: Text('Add set'),
+                ),
+              set != goal.sets.last && set.endRestAt!.isAfter(DateTime.now())
+                  ? ElevatedButton(
+                      onPressed: () async {
+                        preventSkipRest(set, () {
+                          setState(() {
+                            set.isDone = true;
+                          });
+                        });
+                      },
+                      child: Text('Next set'),
+                    )
+                  : set != goal.sets.last
+                      ? DelayedButton(
+                          onPressed: () async {
+                            preventSkipRest(set, () {
+                              setState(() {
+                                set.isDone = true;
+                              });
+                            });
+                          },
+                          child: Text('Next set'),
+                        )
+                      : SizedBox(),
             ]
           ],
         ),
       ),
     );
+  }
+
+  Future<void> preventSkipRest(
+      WeightGoalProgressSet set, VoidCallback callback) async {
+    if (set.endRestAt != null && set.endRestAt!.isAfter(DateTime.now())) {
+      final answer = await askDialog(context, 'Do you want to skip rest?');
+      if (answer == false) {
+        return;
+      }
+    }
+
+    callback();
   }
 
   Future<void> vibrateThreeTimes() async {
