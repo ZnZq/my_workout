@@ -38,10 +38,10 @@ abstract class JsonStorageNotifier<T, TKey> extends ChangeNotifier {
     return _items.any((e) => equalByKey(e, itemKey));
   }
 
-  void update(T item) {
+  void update(T item, {int insertIndex = -1}) {
     final index = _items.indexWhere((e) => isEqual(e, item));
     if (index == -1) {
-      add(item);
+      insertIndex == -1 ? add(item) : insertAt(insertIndex, item);
       return;
     }
 

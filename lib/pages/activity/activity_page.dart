@@ -10,6 +10,7 @@ import 'package:my_workout/models/goal_progress.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
+import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/activity_exercise_tab.dart';
 import 'package:my_workout/widgets/cardio_goal_progress_stats.dart';
@@ -32,7 +33,7 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late TabController _tabController;
 
   StopWatchTimer? stopWatchTimer;
@@ -45,6 +46,8 @@ class _ActivityPageState extends State<ActivityPage>
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+
     date = widget.activity.date;
     title = widget.activity.title;
     exercises.addAll(widget.activity.exercises.map((e) => e.clone()));
@@ -60,6 +63,7 @@ class _ActivityPageState extends State<ActivityPage>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _tabController.dispose();
     stopWatchTimer?.dispose();
 
@@ -68,6 +72,13 @@ class _ActivityPageState extends State<ActivityPage>
 
   bool _isDirty() {
     return buildActivity(false) != widget.activity;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      _save();
+    }
   }
 
   void _onPopInvokedWithResult(
@@ -79,8 +90,19 @@ class _ActivityPageState extends State<ActivityPage>
       return;
     }
 
+    final activity = _save();
+
+    Navigator.of(context).pop(activity);
+  }
+
+  Activity? _save() {
     final isDirty = _isDirty();
-    Navigator.of(context).pop(isDirty ? buildActivity(true) : null);
+    final activity = isDirty ? buildActivity(true) : null;
+    if (activity != null) {
+      Storage.activityStorage.update(activity, insertIndex: 0);
+    }
+
+    return activity;
   }
 
   void _editInfo() async {

@@ -119,12 +119,6 @@ class ActvitiesPage extends StatelessWidget {
   }
 
   void _openActivity(BuildContext context, Activity activity) async {
-    final changedActivity = await Navigator.of(context)
-        .pushNamed<Activity?>(ActivityPage.route, arguments: activity);
-    if (changedActivity == null) {
-      return;
-    }
-
-    Storage.activityStorage.update(changedActivity);
+    Navigator.of(context).pushNamed(ActivityPage.route, arguments: activity);
   }
 }
