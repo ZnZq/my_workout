@@ -161,6 +161,46 @@ class CardioGoal extends Goal {
     level = json['level'] as double?;
   }
 
+  actualizeFrom(CardioGoal goal, {bool copyValues = false}) {
+    if (goal.duration != null && duration == null) {
+      duration = copyValues ? goal.duration : Duration.zero;
+    }
+    if (goal.heartRate != null && heartRate == null) {
+      heartRate = copyValues ? goal.heartRate : 0;
+    }
+    if (goal.speed != null && speed == null) {
+      speed = copyValues ? goal.speed : 0;
+    }
+    if (goal.distance != null && distance == null) {
+      distance = copyValues ? goal.distance : 0;
+    }
+    if (goal.intensity != null && intensity == null) {
+      intensity = copyValues ? goal.intensity : 0;
+    }
+    if (goal.level != null && level == null) {
+      level = copyValues ? goal.level : 0;
+    }
+
+    if (goal.duration == null && duration != null) {
+      duration = null;
+    }
+    if (goal.heartRate == null && heartRate != null) {
+      heartRate = null;
+    }
+    if (goal.speed == null && speed != null) {
+      speed = null;
+    }
+    if (goal.distance == null && distance != null) {
+      distance = null;
+    }
+    if (goal.intensity == null && intensity != null) {
+      intensity = null;
+    }
+    if (goal.level == null && level != null) {
+      level = null;
+    }
+  }
+
   @override
   Map<String, dynamic> toJson() {
     return {
