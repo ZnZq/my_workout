@@ -763,7 +763,17 @@ class _ActivityPageState extends State<ActivityPage>
                 SizedBox(height: 4),
               ],
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  // if set.endRestAt not null and set.endRestAt is not pass, then ask to skip rest
+                  if (set.endRestAt != null &&
+                      set.endRestAt!.isAfter(DateTime.now())) {
+                    final answer =
+                        await askDialog(context, 'Do you want to skip rest?');
+                    if (answer == false) {
+                      return;
+                    }
+                  }
+
                   setState(() {
                     set.isDone = true;
                     if (set == goal.sets.last) {
