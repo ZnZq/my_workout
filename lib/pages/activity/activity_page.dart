@@ -481,14 +481,20 @@ class _ActivityPageState extends State<ActivityPage>
     );
   }
 
-  Widget _buildActiveWeightGoalProgress(
-    BuildContext context,
-    WeightGoalProgress goal,
-  ) {
+  WeightGoalProgressSet getNextSet(WeightGoalProgress goal) {
     final set = goal.sets.firstWhere(
       (e) => !e.isDone,
       orElse: () => goal.sets.last,
     );
+
+    return set;
+  }
+
+  Widget _buildActiveWeightGoalProgress(
+    BuildContext context,
+    WeightGoalProgress goal,
+  ) {
+    final set = getNextSet(goal);
 
     final gridItems = goal.status != ProgressStatus.inProgress
         ? <Widget>[]
@@ -530,7 +536,7 @@ class _ActivityPageState extends State<ActivityPage>
               SizedBox(height: 8),
             ],
             _buildGoalProgressStats(goal),
-            SizedBox(height: 8),
+            SizedBox(height: 4),
             if (set.status == ProgressStatus.planned)
               ElevatedButton(
                 onPressed: () {
@@ -543,62 +549,11 @@ class _ActivityPageState extends State<ActivityPage>
                 child: Text('Start set'),
               ),
             if (set.status == ProgressStatus.inProgress) ...[
-              // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.stretch,
-              //         children: [
-              //           Center(
-              //             child: Text('Reps: ${set.reps}/${goal.goal.reps}'),
-              //           ),
-              //           Card(
-              //             child: NumberPicker(
-              //               axis: Axis.horizontal,
-              //               itemWidth: 60,
-              //               value: set.reps,
-              //               minValue: 0,
-              //               maxValue: 999,
-              //               onChanged: (value) =>
-              //                   setState(() => set.reps = value),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     if (goal.goal.weight != 0)
-              //       Expanded(
-              //         child: Column(
-              //           crossAxisAlignment: CrossAxisAlignment.stretch,
-              //           children: [
-              //             Center(
-              //               child: Text(
-              //                 'Weight: ${set.weight.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
-              //               ),
-              //             ),
-              //             Card(
-              //               child: DecimalNumberPicker(
-              //                 axis: Axis.horizontal,
-              //                 itemWidth: 45,
-              //                 itemHeight: 45,
-              //                 value: set.weight,
-              //                 minValue: 0,
-              //                 maxValue: 999,
-              //                 onChanged: (value) =>
-              //                     setState(() => set.weight = value),
-              //               ),
-              //             )
-              //           ],
-              //         ),
-              //       ),
-              //   ],
-              // ),
               GridView.count(
                 shrinkWrap: true,
-                crossAxisCount: 2,
+                crossAxisCount: gridItems.length,
                 physics: NeverScrollableScrollPhysics(),
-                childAspectRatio: 1 / 1,
+                childAspectRatio: gridItems.length == 1 ? 3 / 1 : 1.5 / 1,
                 children: gridItems,
               ),
               ElevatedButton(
@@ -658,24 +613,12 @@ class _ActivityPageState extends State<ActivityPage>
                 ),
               set != goal.sets.last && set.endRestAt!.isAfter(DateTime.now())
                   ? ElevatedButton(
-                      onPressed: () async {
-                        preventSkipRest(set, () {
-                          setState(() {
-                            set.isDone = true;
-                          });
-                        });
-                      },
+                      onPressed: () => _goNextSet(set, goal),
                       child: Text('Next set'),
                     )
                   : set != goal.sets.last
                       ? DelayedButton(
-                          onPressed: () async {
-                            preventSkipRest(set, () {
-                              setState(() {
-                                set.isDone = true;
-                              });
-                            });
-                          },
+                          onPressed: () => _goNextSet(set, goal),
                           child: Text('Next set'),
                         )
                       : SizedBox(),
@@ -684,6 +627,20 @@ class _ActivityPageState extends State<ActivityPage>
         ),
       ),
     );
+  }
+
+  void _goNextSet(WeightGoalProgressSet set, WeightGoalProgress goal) {
+    preventSkipRest(set, () {
+      setState(() {
+        set.isDone = true;
+        final nextSet = getNextSet(goal);
+        if (nextSet.status == ProgressStatus.planned) {
+          nextSet.status = ProgressStatus.inProgress;
+          nextSet.reps = goal.goal.reps;
+          nextSet.weight = goal.goal.weight;
+        }
+      });
+    });
   }
 
   Future<void> preventSkipRest(
