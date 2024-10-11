@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/widgets/icon_text.dart';
 
@@ -47,22 +48,22 @@ class WeightGoalProgressStats extends StatelessWidget {
           children: [
             IconText(
               text: '${completeSets.length}/${goal.goal.sets}',
-              icon: Icons.play_arrow,
-              iconColor: Colors.orange,
+              icon: ui.stat.sets.icon,
+              iconColor: ui.stat.sets.color,
               endGap: 8,
             ),
             IconText(
               text: '$completeRepsCountStr/${goal.goal.reps}',
-              icon: Icons.repeat,
-              iconColor: Colors.green,
+              icon: ui.stat.reps.icon,
+              iconColor: ui.stat.reps.color,
               endGap: 8,
             ),
             if (goal.goal.weight != 0)
               IconText(
                 text:
                     '${completedWeightAvg.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
-                icon: Icons.fitness_center,
-                iconColor: Colors.blue,
+                icon: ui.stat.weight.icon,
+                iconColor: ui.stat.weight.color,
                 endGap: 8,
               ),
             IconText(

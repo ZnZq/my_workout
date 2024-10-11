@@ -13,6 +13,8 @@ extension MapExtension<K, V> on Map<K, V> {
   }
 }
 
+Type typeOf<X>() => X;
+
 Future<void> vibrate({
   int duration = 500,
   List<int> pattern = const [],

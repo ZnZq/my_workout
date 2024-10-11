@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/models/goal.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/icon_text.dart';
@@ -29,28 +30,29 @@ class WeightGoalTile extends StatelessWidget {
         child: Wrap(
           children: [
             IconText(
-              text: 'Sets: ${goal.sets}',
-              icon: Icons.play_arrow,
-              iconColor: Colors.orange,
+              text: '${ui.stat.sets.name}: ${goal.sets}',
+              icon: ui.stat.sets.icon,
+              iconColor: ui.stat.sets.color,
               endGap: 8,
             ),
             IconText(
-              text: 'Reps: ${goal.reps}',
-              icon: Icons.repeat,
-              iconColor: Colors.green,
+              text: '${ui.stat.reps.name}: ${goal.reps}',
+              icon: ui.stat.reps.icon,
+              iconColor: ui.stat.reps.color,
               endGap: 8,
             ),
             IconText(
-              text: 'Rest: ${formatDuration(goal.rest)}',
-              icon: Icons.timer_sharp,
-              iconColor: Colors.blue,
+              text: '${ui.stat.rest.name}: ${formatDuration(goal.rest)}',
+              icon: ui.stat.rest.icon,
+              iconColor: ui.stat.rest.color,
               endGap: 8,
             ),
             if (goal.weight > 0)
               IconText(
-                text: 'Weight: ${goal.weight.toStringAsFixed(1)}',
-                icon: Icons.fitness_center,
-                iconColor: Colors.blue,
+                text:
+                    '${ui.stat.weight.name}: ${goal.weight.toStringAsFixed(1)}',
+                icon: ui.stat.weight.icon,
+                iconColor: ui.stat.weight.color,
                 endGap: 8,
               ),
           ],

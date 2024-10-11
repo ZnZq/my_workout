@@ -125,12 +125,12 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      for (var goal in goals)
+                      for (final pair in goals.indexed)
                         Card(
                           margin: EdgeInsets.only(bottom: 8),
                           clipBehavior: Clip.hardEdge,
                           child: Dismissible(
-                            key: ValueKey(goal.id),
+                            key: ValueKey(pair.$2.id),
                             direction: DismissDirection.endToStart,
                             background: Container(
                               color: Colors.red,
@@ -142,14 +142,18 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                               ),
                             ),
                             onDismissed: (direction) {
-                              setState(() => goals.remove(goal));
+                              setState(() => goals.remove(pair.$2));
                             },
-                            child: goal is WeightGoal
+                            child: pair.$2 is WeightGoal
                                 ? WeightGoalTile(
-                                    goal: goal, goalEdited: _onGoalEdited)
-                                : goal is CardioGoal
+                                    goal: pair.$2 as WeightGoal,
+                                    goalEdited: (goal) =>
+                                        _onGoalEdited(goal, pair.$1))
+                                : pair.$2 is CardioGoal
                                     ? CardioGoalTile(
-                                        goal: goal, goalEdited: _onGoalEdited)
+                                        goal: pair.$2 as CardioGoal,
+                                        goalEdited: (goal) =>
+                                            _onGoalEdited(goal, pair.$1))
                                     : Text('WTF???'),
                           ),
                         ),
@@ -187,8 +191,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
     );
   }
 
-  void _onGoalEdited(Goal goal) {
-    final index = goals.indexOf(goal);
+  void _onGoalEdited(Goal goal, int index) {
     setState(() => goals[index] = goal);
   }
 }

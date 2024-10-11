@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/models/goal.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/icon_text.dart';
@@ -34,44 +35,49 @@ class CardioGoalTile extends StatelessWidget {
               children: [
                 if (goal.duration != null)
                   IconText(
-                    text: 'Duration: ${formatDuration(goal.duration!)}',
-                    icon: Icons.timer_sharp,
-                    iconColor: Colors.blue,
+                    text:
+                        '${ui.stat.duration.name}: ${formatDuration(goal.duration!)}',
+                    icon: ui.stat.duration.icon,
+                    iconColor: ui.stat.duration.color,
                     endGap: 8,
                   ),
                 if (goal.heartRate != null)
                   IconText(
-                    text: 'Heart rate: ${goal.heartRate}',
-                    icon: Icons.favorite,
-                    iconColor: Colors.red,
+                    text: '${ui.stat.heartRate.name}: ${goal.heartRate}',
+                    icon: ui.stat.heartRate.icon,
+                    iconColor: ui.stat.heartRate.color,
                     endGap: 8,
                   ),
                 if (goal.speed != null)
                   IconText(
-                    text: 'Speed: ${goal.speed!.toStringAsFixed(1)}',
-                    icon: Icons.speed,
-                    iconColor: Colors.orange,
+                    text:
+                        '${ui.stat.speed.name}: ${goal.speed!.toStringAsFixed(1)}',
+                    icon: ui.stat.speed.icon,
+                    iconColor: ui.stat.speed.color,
                     endGap: 8,
                   ),
                 if (goal.distance != null)
                   IconText(
-                    text: 'Distance: ${goal.distance!.toStringAsFixed(1)}',
-                    icon: Icons.location_on,
-                    iconColor: Colors.indigo,
+                    text:
+                        '${ui.stat.distance.name}: ${goal.distance!.toStringAsFixed(1)}',
+                    icon: ui.stat.distance.icon,
+                    iconColor: ui.stat.distance.color,
                     endGap: 8,
                   ),
                 if (goal.intensity != null)
                   IconText(
-                    text: 'Intensity: ${goal.intensity!.toStringAsFixed(1)}',
-                    icon: Icons.bolt,
-                    iconColor: Colors.green,
+                    text:
+                        '${ui.stat.intensity.name}: ${goal.intensity!.toStringAsFixed(1)}',
+                    icon: ui.stat.intensity.icon,
+                    iconColor: ui.stat.intensity.color,
                     endGap: 8,
                   ),
                 if (goal.level != null)
                   IconText(
-                    text: 'Level: ${goal.level!.toStringAsFixed(1)}',
-                    icon: Icons.leaderboard,
-                    iconColor: Colors.yellow,
+                    text:
+                        '${ui.stat.level.name}: ${goal.level!.toStringAsFixed(1)}',
+                    icon: ui.stat.level.icon,
+                    iconColor: ui.stat.level.color,
                     endGap: 8,
                   ),
               ],

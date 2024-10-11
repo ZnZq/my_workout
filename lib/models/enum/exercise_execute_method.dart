@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 
 enum ExerciseExecuteMethod {
   weight,
@@ -9,18 +10,18 @@ extension ExerciseExecuteMethodExtension on ExerciseExecuteMethod {
   IconData get icon {
     switch (this) {
       case ExerciseExecuteMethod.weight:
-        return Icons.fitness_center;
+        return ui.stat.weight.icon;
       case ExerciseExecuteMethod.cardio:
-        return Icons.monitor_heart;
+        return ui.stat.cardio.icon;
     }
   }
 
   Color get color {
     switch (this) {
       case ExerciseExecuteMethod.weight:
-        return Colors.blue;
+        return ui.stat.weight.color;
       case ExerciseExecuteMethod.cardio:
-        return Colors.green;
+        return ui.stat.cardio.color;
     }
   }
 }

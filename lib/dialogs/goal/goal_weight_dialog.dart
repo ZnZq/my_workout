@@ -1,9 +1,9 @@
 import 'package:duration_picker/duration_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/models/goal.dart';
-import 'package:my_workout/utils.dart';
-import 'package:my_workout/widgets/workout_expansion.dart';
-import 'package:numberpicker/numberpicker.dart';
+import 'package:my_workout/widgets/duration_stat_tile.dart';
+import 'package:my_workout/widgets/num_stat_tile.dart';
 
 class GoalWeightDialog extends StatefulWidget {
   final WeightGoal goal;
@@ -40,151 +40,51 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final elevatedButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      minimumSize: Size(0, 0),
-      elevation: 0,
-    );
-
     return AlertDialog(
       title: Text('${widget.goal.executeMethod.name} goal'),
       actionsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      content: SizedBox(
+        width: double.maxFinite,
+        child: GridView.count(
+          shrinkWrap: true,
+          crossAxisCount: 2,
+          physics: NeverScrollableScrollPhysics(),
+          childAspectRatio: 1 / 1,
           children: [
-            Text('Sets: $sets'),
-            Row(
-              children: [
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => sets = (sets - 10).clamp(minSets, maxSets),
-                  ),
-                  child: Text('-10'),
-                ),
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 150),
-                    child: Center(
-                      child: Card(
-                        child: NumberPicker(
-                          axis: Axis.horizontal,
-                          itemWidth: 45,
-                          value: sets,
-                          minValue: minSets,
-                          maxValue: maxSets,
-                          onChanged: (value) => setState(() => sets = value),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => sets = (sets + (sets == minSets ? 9 : 10))
-                        .clamp(minSets, maxSets),
-                  ),
-                  child: Text('+10'),
-                ),
-              ],
+            NumStatTile<int>(
+              icon: ui.stat.sets.icon,
+              iconColor: ui.stat.sets.color,
+              title: ui.stat.sets.name,
+              value: sets,
+              onChanged: (value) => setState(() => sets = value),
+              minValue: ui.stat.sets.minValue,
+              maxValue: ui.stat.sets.maxValue,
             ),
-            Text('Reps: $reps'),
-            Row(
-              children: [
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => reps = (reps - 10).clamp(minReps, maxReps),
-                  ),
-                  child: Text('-10'),
-                ),
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 150),
-                    child: Center(
-                      child: Card(
-                        child: NumberPicker(
-                          axis: Axis.horizontal,
-                          itemWidth: 45,
-                          value: reps,
-                          minValue: minReps,
-                          maxValue: maxReps,
-                          onChanged: (value) => setState(() => reps = value),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => reps = (reps + (reps == minReps ? 9 : 10))
-                        .clamp(minReps, maxReps),
-                  ),
-                  child: Text('+10'),
-                ),
-              ],
+            NumStatTile<int>(
+              icon: ui.stat.reps.icon,
+              iconColor: ui.stat.reps.color,
+              title: ui.stat.reps.name,
+              value: reps,
+              onChanged: (value) => setState(() => reps = value),
+              minValue: ui.stat.reps.minValue,
+              maxValue: ui.stat.reps.maxValue,
             ),
-            Text('Weight: ${weight.toStringAsFixed(1)}'),
-            Row(
-              children: [
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => weight = (weight - 5.0).clamp(minWeight, maxWeight),
-                  ),
-                  child: Text('-5'),
-                ),
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 150),
-                    child: Card(
-                      child: DecimalNumberPicker(
-                        axis: Axis.horizontal,
-                        itemWidth: 45,
-                        itemHeight: 45,
-                        value: weight,
-                        minValue: minWeight.toInt(),
-                        maxValue: maxWeight.toInt(),
-                        onChanged: (value) => setState(() => weight = value),
-                      ),
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => setState(
-                    () => weight = (weight + 5.0).clamp(minWeight, maxWeight),
-                  ),
-                  child: Text('+5'),
-                ),
-              ],
+            NumStatTile<double>(
+              icon: ui.stat.weight.icon,
+              iconColor: ui.stat.weight.color,
+              title: ui.stat.weight.name,
+              value: weight,
+              onChanged: (value) => setState(() => weight = value),
+              minValue: ui.stat.weight.minValue,
+              maxValue: ui.stat.weight.maxValue,
             ),
-            WorkoutExpansion(
-              title: 'Rest',
-              displayValue: formatDuration(rest),
-              actions: [
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => _addRest(Duration(seconds: -30)),
-                  child: Text('-30s'),
-                ),
-                SizedBox(width: 4),
-                ElevatedButton(
-                  style: elevatedButtonStyle,
-                  onPressed: () => _addRest(Duration(seconds: 30)),
-                  child: Text('+30s'),
-                ),
-              ],
-              child: DurationPicker(
-                duration: rest,
-                lowerBound: minRest,
-                baseUnit: BaseUnit.second,
-                onChange: _setRest,
-              ),
+            DurationStatTile(
+              icon: ui.stat.rest.icon,
+              iconColor: ui.stat.rest.color,
+              title: ui.stat.rest.name,
+              baseUnit: BaseUnit.second,
+              value: rest,
+              onChanged: (value) => setState(() => rest = value),
             ),
           ],
         ),
@@ -210,14 +110,5 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
         ),
       ],
     );
-  }
-
-  void _addRest(Duration duration) {
-    final newDuration = rest + duration;
-    _setRest(newDuration <= minRest ? minRest : newDuration);
-  }
-
-  void _setRest(Duration duration) {
-    setState(() => rest = duration);
   }
 }

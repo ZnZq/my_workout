@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
@@ -31,14 +32,19 @@ class WeightGoalProgressSetTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.repeat, color: Colors.green, size: 16),
+                  Icon(ui.stat.reps.icon, color: ui.stat.reps.color, size: 16),
                   SizedBox(width: 4),
-                  Text('Reps: ${set.reps.toString()}'),
+                  Text('${ui.stat.reps.name}: ${set.reps.toString()}'),
                   if (goal.goal.weight != 0) ...[
                     SizedBox(width: 8),
-                    Icon(Icons.fitness_center, color: Colors.blue, size: 16),
+                    Icon(
+                      ui.stat.weight.icon,
+                      color: ui.stat.weight.color,
+                      size: 16,
+                    ),
                     SizedBox(width: 4),
-                    Text('Weight: ${set.weight.toStringAsFixed(1)}'),
+                    Text(
+                        '${ui.stat.weight.name}: ${set.weight.toStringAsFixed(1)}'),
                   ],
                   if (action != null) ...[
                     Spacer(),

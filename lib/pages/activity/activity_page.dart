@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:my_workout/data.dart';
 import 'package:my_workout/dialogs/activity_exercises_dialog.dart';
 import 'package:my_workout/dialogs/weight_goal_progress_set_dialog.dart';
 import 'package:my_workout/models/activity.dart';
@@ -17,9 +18,9 @@ import 'package:my_workout/widgets/cardio_goal_progress_stats.dart';
 import 'package:my_workout/widgets/compact_button.dart';
 import 'package:my_workout/widgets/delayed_button.dart';
 import 'package:my_workout/widgets/icon_text.dart';
+import 'package:my_workout/widgets/num_stat_tile.dart';
 import 'package:my_workout/widgets/weight_goal_progress_set_tile.dart';
 import 'package:my_workout/widgets/weight_goal_progress_stats.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:timelines/timelines.dart';
 
@@ -264,185 +265,80 @@ class _ActivityPageState extends State<ActivityPage>
   ) {
     final actual = goal.actual;
 
-    final elevatedButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      minimumSize: Size(0, 0),
-      elevation: 0,
-    );
+    // final elevatedButtonStyle = ElevatedButton.styleFrom(
+    //   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+    //   minimumSize: Size(0, 0),
+    //   elevation: 0,
+    // );
 
     final gridItems = goal.status != ProgressStatus.inProgress
         ? <Widget>[]
         : <Widget>[
+            if (goal.actual.heartRate != null) ...[
+              NumStatTile<int>(
+                icon: ui.stat.heartRate.icon,
+                iconColor: ui.stat.heartRate.color,
+                title: ui.stat.heartRate.name,
+                value: actual.heartRate!,
+                minValue: ui.stat.heartRate.minValue,
+                maxValue: ui.stat.heartRate.maxValue,
+                valueFormatter: (value) => '$value / ${goal.goal.heartRate!}',
+                onChanged: (value) =>
+                    setState(() => goal.actual.heartRate = value),
+              ),
+            ],
             if (goal.actual.speed != null) ...[
-              Card(
-                margin: EdgeInsets.all(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.speed, color: Colors.orange, size: 16),
-                          SizedBox(width: 4),
-                          Text('Speed: ${actual.speed!.toStringAsFixed(1)}'),
-                        ],
-                      ),
-                      Spacer(),
-                      SizedBox(
-                        width: 43 * 3,
-                        child: Card(
-                          color: Colors.grey[850],
-                          child: DecimalNumberPicker(
-                            axis: Axis.vertical,
-                            itemHeight: 40,
-                            itemWidth: 40,
-                            value: actual.speed!,
-                            textStyle: TextStyle(fontSize: 14),
-                            selectedTextStyle: TextStyle(fontSize: 20),
-                            minValue: 0,
-                            maxValue: 999,
-                            onChanged: (value) =>
-                                setState(() => goal.actual.speed = value),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              NumStatTile<double>(
+                icon: ui.stat.speed.icon,
+                iconColor: ui.stat.speed.color,
+                title: ui.stat.speed.name,
+                value: actual.speed!,
+                minValue: ui.stat.speed.minValue,
+                maxValue: ui.stat.speed.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.speed!.toStringAsFixed(1)}',
+                onChanged: (value) => setState(() => goal.actual.speed = value),
               ),
             ],
             if (goal.actual.distance != null) ...[
-              Card(
-                margin: EdgeInsets.all(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.location_on,
-                              color: Colors.indigo, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                              'Distance: ${actual.distance!.toStringAsFixed(1)}'),
-                        ],
-                      ),
-                      Spacer(),
-                      SizedBox(
-                        width: 43 * 3,
-                        child: Card(
-                          color: Colors.grey[850],
-                          child: DecimalNumberPicker(
-                            axis: Axis.vertical,
-                            itemHeight: 40,
-                            itemWidth: 40,
-                            value: actual.distance!,
-                            textStyle: TextStyle(fontSize: 14),
-                            selectedTextStyle: TextStyle(fontSize: 20),
-                            minValue: 0,
-                            maxValue: 999,
-                            onChanged: (value) =>
-                                setState(() => goal.actual.distance = value),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              NumStatTile<double>(
+                icon: ui.stat.distance.icon,
+                iconColor: ui.stat.distance.color,
+                title: ui.stat.distance.name,
+                value: actual.distance!,
+                minValue: ui.stat.distance.minValue,
+                maxValue: ui.stat.distance.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.distance!.toStringAsFixed(1)}',
+                onChanged: (value) =>
+                    setState(() => goal.actual.distance = value),
               ),
             ],
             if (goal.actual.intensity != null) ...[
-              Card(
-                margin: EdgeInsets.all(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.bolt, color: Colors.green, size: 16),
-                          SizedBox(width: 4),
-                          Text(
-                              'Intensity: ${actual.intensity!.toStringAsFixed(1)}'),
-                        ],
-                      ),
-                      Spacer(),
-                      SizedBox(
-                        width: 43 * 3,
-                        child: Card(
-                          color: Colors.grey[850],
-                          child: DecimalNumberPicker(
-                            axis: Axis.vertical,
-                            itemHeight: 40,
-                            itemWidth: 40,
-                            value: actual.intensity!,
-                            textStyle: TextStyle(fontSize: 14),
-                            selectedTextStyle: TextStyle(fontSize: 20),
-                            minValue: 0,
-                            maxValue: 999,
-                            onChanged: (value) =>
-                                setState(() => goal.actual.intensity = value),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              NumStatTile<double>(
+                icon: ui.stat.intensity.icon,
+                iconColor: ui.stat.intensity.color,
+                title: ui.stat.intensity.name,
+                value: actual.intensity!,
+                minValue: ui.stat.intensity.minValue,
+                maxValue: ui.stat.intensity.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.intensity!.toStringAsFixed(1)}',
+                onChanged: (value) =>
+                    setState(() => goal.actual.intensity = value),
               ),
             ],
             if (goal.actual.level != null) ...[
-              Card(
-                margin: EdgeInsets.all(4),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Spacer(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.leaderboard,
-                              color: Colors.yellow, size: 16),
-                          SizedBox(width: 4),
-                          Text('Level: ${actual.level!.toStringAsFixed(1)}'),
-                        ],
-                      ),
-                      Spacer(),
-                      SizedBox(
-                        width: 43 * 3,
-                        child: Card(
-                          color: Colors.grey[850],
-                          child: DecimalNumberPicker(
-                            axis: Axis.vertical,
-                            itemHeight: 40,
-                            itemWidth: 40,
-                            value: actual.level!,
-                            textStyle: TextStyle(fontSize: 14),
-                            selectedTextStyle: TextStyle(fontSize: 20),
-                            minValue: 0,
-                            maxValue: 999,
-                            onChanged: (value) =>
-                                setState(() => goal.actual.level = value),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              NumStatTile<double>(
+                icon: ui.stat.level.icon,
+                iconColor: ui.stat.level.color,
+                title: ui.stat.level.name,
+                value: actual.level!,
+                minValue: ui.stat.level.minValue,
+                maxValue: ui.stat.level.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.level!.toStringAsFixed(1)}',
+                onChanged: (value) => setState(() => goal.actual.level = value),
               ),
             ],
           ];
@@ -458,8 +354,8 @@ class _ActivityPageState extends State<ActivityPage>
               _buildSelectedExerciseCard(goal),
               SizedBox(height: 8),
             ],
-            _buildGoalProgressStats(goal),
-            SizedBox(height: 8),
+            // _buildGoalProgressStats(goal),
+            // SizedBox(height: 8),
             if (goal.status == ProgressStatus.planned)
               ElevatedButton(
                 onPressed: () {
@@ -479,66 +375,15 @@ class _ActivityPageState extends State<ActivityPage>
               ),
             if (goal.status == ProgressStatus.inProgress) ...[
               _buildCardioGoalProgressTimer(goal),
-              SizedBox(height: 8),
-              if (goal.actual.heartRate != null) ...[
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Row(
-                      children: [
-                        Icon(Icons.favorite, color: Colors.red, size: 16),
-                        SizedBox(width: 4),
-                        Text('Heart rate: ${actual.heartRate}'),
-                        Spacer(),
-                        ElevatedButton(
-                          style: elevatedButtonStyle,
-                          onPressed: () => setState(
-                            () => goal.actual.heartRate =
-                                (goal.actual.heartRate! - 10).clamp(40, 300),
-                          ),
-                          child: Text('-10'),
-                        ),
-                        SizedBox(
-                          width: 43 * 3,
-                          child: Card(
-                            color: Colors.grey[850],
-                            child: NumberPicker(
-                              axis: Axis.horizontal,
-                              itemWidth: 40,
-                              value: goal.actual.heartRate!,
-                              textStyle: TextStyle(fontSize: 14),
-                              selectedTextStyle: TextStyle(fontSize: 20),
-                              minValue: 40,
-                              maxValue: 300,
-                              onChanged: (value) =>
-                                  setState(() => goal.actual.heartRate = value),
-                            ),
-                          ),
-                        ),
-                        ElevatedButton(
-                          style: elevatedButtonStyle,
-                          onPressed: () => setState(
-                            () => goal.actual.heartRate =
-                                (goal.actual.heartRate! + 10).clamp(40, 300),
-                          ),
-                          child: Text('+10'),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8),
-              ],
+              SizedBox(height: 4),
               if (gridItems.isNotEmpty) ...[
                 GridView.count(
                   shrinkWrap: true,
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   physics: NeverScrollableScrollPhysics(),
                   childAspectRatio: 1 / 1,
                   children: gridItems,
                 ),
-                SizedBox(height: 8),
               ],
               ElevatedButton(
                 onPressed: () {
@@ -567,23 +412,15 @@ class _ActivityPageState extends State<ActivityPage>
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            Icon(Icons.timer_sharp, color: Colors.blue, size: 16),
-            SizedBox(width: 4),
-            StreamBuilder(
-              stream: stopWatchTimer!.secondTime,
-              initialData: goal.actual.duration!.inSeconds,
-              builder: (context, snapshot) {
-                final value = snapshot.data!;
-                final displayTime = StopWatchTimer.getDisplayTime(
-                  value * 1000,
-                  milliSecond: false,
-                );
-
-                return Text(goal.goal.duration == null
-                    ? '$displayTime passed'
-                    : '$displayTime left');
-              },
+            Icon(
+              ui.stat.duration.icon,
+              color: ui.stat.duration.color,
+              size: 16,
             ),
+            SizedBox(width: 4),
+            Text(goal.goal.duration == null
+                ? formatDuration(goal.actual.duration!)
+                : '${formatDuration(goal.actual.duration!)}/${formatDuration(goal.goal.duration!)}'),
             Spacer(),
             CompactButton(
               text: stopWatchTimer!.isRunning ? 'Pause' : 'Play',
@@ -653,6 +490,34 @@ class _ActivityPageState extends State<ActivityPage>
       orElse: () => goal.sets.last,
     );
 
+    final gridItems = goal.status != ProgressStatus.inProgress
+        ? <Widget>[]
+        : <Widget>[
+            NumStatTile<int>(
+              icon: ui.stat.reps.icon,
+              iconColor: ui.stat.reps.color,
+              title: ui.stat.reps.name,
+              value: set.reps,
+              minValue: ui.stat.reps.minValue,
+              maxValue: ui.stat.reps.maxValue,
+              valueFormatter: (value) => '$value / ${goal.goal.reps}',
+              onChanged: (value) => setState(() => set.reps = value),
+            ),
+            if (goal.goal.weight != 0) ...[
+              NumStatTile<double>(
+                icon: ui.stat.weight.icon,
+                iconColor: ui.stat.weight.color,
+                title: ui.stat.weight.name,
+                value: set.weight,
+                minValue: ui.stat.weight.minValue,
+                maxValue: ui.stat.weight.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.weight.toStringAsFixed(1)}',
+                onChanged: (value) => setState(() => set.weight = value),
+              ),
+            ],
+          ];
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.only(left: 12, right: 12),
@@ -678,56 +543,63 @@ class _ActivityPageState extends State<ActivityPage>
                 child: Text('Start set'),
               ),
             if (set.status == ProgressStatus.inProgress) ...[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Center(
-                          child: Text('Reps: ${set.reps}/${goal.goal.reps}'),
-                        ),
-                        Card(
-                          child: NumberPicker(
-                            axis: Axis.horizontal,
-                            itemWidth: 60,
-                            value: set.reps,
-                            minValue: 0,
-                            maxValue: 999,
-                            onChanged: (value) =>
-                                setState(() => set.reps = value),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (goal.goal.weight != 0)
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Center(
-                            child: Text(
-                              'Weight: ${set.weight.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
-                            ),
-                          ),
-                          Card(
-                            child: DecimalNumberPicker(
-                              axis: Axis.horizontal,
-                              itemWidth: 45,
-                              itemHeight: 45,
-                              value: set.weight,
-                              minValue: 0,
-                              maxValue: 999,
-                              onChanged: (value) =>
-                                  setState(() => set.weight = value),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                ],
+              // Row(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   children: [
+              //     Expanded(
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.stretch,
+              //         children: [
+              //           Center(
+              //             child: Text('Reps: ${set.reps}/${goal.goal.reps}'),
+              //           ),
+              //           Card(
+              //             child: NumberPicker(
+              //               axis: Axis.horizontal,
+              //               itemWidth: 60,
+              //               value: set.reps,
+              //               minValue: 0,
+              //               maxValue: 999,
+              //               onChanged: (value) =>
+              //                   setState(() => set.reps = value),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     if (goal.goal.weight != 0)
+              //       Expanded(
+              //         child: Column(
+              //           crossAxisAlignment: CrossAxisAlignment.stretch,
+              //           children: [
+              //             Center(
+              //               child: Text(
+              //                 'Weight: ${set.weight.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
+              //               ),
+              //             ),
+              //             Card(
+              //               child: DecimalNumberPicker(
+              //                 axis: Axis.horizontal,
+              //                 itemWidth: 45,
+              //                 itemHeight: 45,
+              //                 value: set.weight,
+              //                 minValue: 0,
+              //                 maxValue: 999,
+              //                 onChanged: (value) =>
+              //                     setState(() => set.weight = value),
+              //               ),
+              //             )
+              //           ],
+              //         ),
+              //       ),
+              //   ],
+              // ),
+              GridView.count(
+                shrinkWrap: true,
+                crossAxisCount: 2,
+                physics: NeverScrollableScrollPhysics(),
+                childAspectRatio: 1 / 1,
+                children: gridItems,
               ),
               ElevatedButton(
                 onPressed: () {
@@ -849,29 +721,32 @@ class _ActivityPageState extends State<ActivityPage>
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        size: 20,
-                        selectedExercise!.executeMethod.icon,
-                        color: selectedExercise!.executeMethod.color,
-                      ),
-                      SizedBox(width: 8),
-                      Text(selectedExercise!.name),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          size: 20,
+                          selectedExercise!.executeMethod.icon,
+                          color: selectedExercise!.executeMethod.color,
+                        ),
+                        SizedBox(width: 8),
+                        Text(selectedExercise!.name),
+                      ],
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          'Goal #${selectedExercise!.goalProgress.indexOf(goal) + 1} of ${selectedExercise!.goalProgress.length}'),
-                      SizedBox(width: 12),
-                      if (goal is WeightGoalProgress && set != null)
-                        Text(
-                            'Set #${goal.sets.indexOf(set) + 1} of ${goal.sets.length}')
-                    ],
-                  )
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Text(
+                  //         'Goal #${selectedExercise!.goalProgress.indexOf(goal) + 1} of ${selectedExercise!.goalProgress.length}'),
+                  //     SizedBox(width: 12),
+                  //     if (goal is WeightGoalProgress && set != null)
+                  //       Text(
+                  //           'Set #${goal.sets.indexOf(set) + 1} of ${goal.sets.length}')
+                  //   ],
+                  // )
                 ],
               ),
               Positioned(
@@ -879,7 +754,8 @@ class _ActivityPageState extends State<ActivityPage>
                 top: 0,
                 bottom: 0,
                 child: IconButton(
-                  icon: Icon(Icons.close),
+                  padding: EdgeInsets.all(4),
+                  icon: Icon(Icons.close, size: 16),
                   onPressed: () {
                     _runGoalProgress(null, null);
                   },
@@ -906,7 +782,7 @@ class _ActivityPageState extends State<ActivityPage>
                   child: TabBar(
                     controller: _tabController,
                     dividerHeight: 0,
-                    physics: const NeverScrollableScrollPhysics(),
+                    // physics: const NeverScrollableScrollPhysics(),
                     isScrollable: true,
                     tabAlignment: TabAlignment.center,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 4),
@@ -1205,44 +1081,48 @@ class _ActivityPageState extends State<ActivityPage>
       children: [
         if (goal.actual.duration != null)
           IconText(
-            text: 'Duration: ${formatDuration(goal.actual.duration!)}',
-            icon: Icons.timer_sharp,
-            iconColor: Colors.blue,
+            text:
+                '${ui.stat.duration.name}: ${formatDuration(goal.actual.duration!)}',
+            icon: ui.stat.duration.icon,
+            iconColor: ui.stat.duration.color,
             endGap: 8,
           ),
         if (goal.actual.heartRate != null)
           IconText(
-            text: 'Heart rate: ${goal.actual.heartRate}',
-            icon: Icons.favorite,
-            iconColor: Colors.red,
+            text: '${ui.stat.heartRate.name}: ${goal.actual.heartRate}',
+            icon: ui.stat.heartRate.icon,
+            iconColor: ui.stat.heartRate.color,
             endGap: 8,
           ),
         if (goal.actual.speed != null)
           IconText(
-            text: 'Speed: ${goal.actual.speed!.toStringAsFixed(1)}',
-            icon: Icons.speed,
-            iconColor: Colors.orange,
+            text:
+                '${ui.stat.speed.name}: ${goal.actual.speed!.toStringAsFixed(1)}',
+            icon: ui.stat.speed.icon,
+            iconColor: ui.stat.speed.color,
             endGap: 8,
           ),
         if (goal.actual.distance != null)
           IconText(
-            text: 'Distance: ${goal.actual.distance!.toStringAsFixed(1)}',
-            icon: Icons.location_on,
-            iconColor: Colors.indigo,
+            text:
+                '${ui.stat.distance.name}: ${goal.actual.distance!.toStringAsFixed(1)}',
+            icon: ui.stat.distance.icon,
+            iconColor: ui.stat.distance.color,
             endGap: 8,
           ),
         if (goal.actual.intensity != null)
           IconText(
-            text: 'Intensity: ${goal.actual.intensity!.toStringAsFixed(1)}',
-            icon: Icons.bolt,
-            iconColor: Colors.green,
+            text:
+                '${ui.stat.intensity.name}: ${goal.actual.intensity!.toStringAsFixed(1)}',
+            icon: ui.stat.intensity.icon,
+            iconColor: ui.stat.intensity.color,
             endGap: 8,
           ),
         if (goal.actual.level != null)
           IconText(
-            text: 'Level: ${goal.actual.level}',
-            icon: Icons.leaderboard,
-            iconColor: Colors.yellow,
+            text: '${ui.stat.level.name}: ${goal.actual.level}',
+            icon: ui.stat.level.icon,
+            iconColor: ui.stat.level.color,
             endGap: 8,
           ),
       ],
