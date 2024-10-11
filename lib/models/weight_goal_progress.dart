@@ -15,9 +15,6 @@ class WeightGoalProgress extends GoalProgress<WeightGoal> with EquatableMixin {
 
   ProgressStatus get status {
     final completedSets = this.completedSets;
-    if (completedSets.length < goal.sets) {
-      return ProgressStatus.inProgress;
-    }
     if (completedSets.length == sets.length) {
       return ProgressStatus.completed;
     } else if (sets.any((s) => s.status != ProgressStatus.planned)) {
