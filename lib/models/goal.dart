@@ -137,6 +137,7 @@ class CardioGoal extends Goal {
   double? distance;
   double? intensity;
   double? level;
+  double? incline;
 
   CardioGoal({
     this.duration,
@@ -145,6 +146,7 @@ class CardioGoal extends Goal {
     this.distance,
     this.intensity,
     this.level,
+    this.incline,
     String? id,
   }) : super(id);
 
@@ -159,6 +161,7 @@ class CardioGoal extends Goal {
     distance = json['distance'] as double?;
     intensity = json['intensity'] as double?;
     level = json['level'] as double?;
+    incline = json.getOrDefault('incline', null) as double?;
   }
 
   actualizeFrom(CardioGoal goal, {bool copyValues = false}) {
@@ -180,6 +183,9 @@ class CardioGoal extends Goal {
     if (goal.level != null && level == null) {
       level = copyValues ? goal.level : 0;
     }
+    if (goal.incline != null && incline == null) {
+      incline = copyValues ? goal.incline : 0;
+    }
 
     if (goal.duration == null && duration != null) {
       duration = null;
@@ -199,6 +205,9 @@ class CardioGoal extends Goal {
     if (goal.level == null && level != null) {
       level = null;
     }
+    if (goal.incline == null && incline != null) {
+      incline = null;
+    }
   }
 
   @override
@@ -212,6 +221,7 @@ class CardioGoal extends Goal {
       'distance': distance,
       'intensity': intensity,
       'level': level,
+      'incline': incline,
     };
   }
 
@@ -225,6 +235,7 @@ class CardioGoal extends Goal {
       distance: distance,
       intensity: intensity,
       level: level,
+      incline: incline,
     );
   }
 
@@ -246,6 +257,9 @@ class CardioGoal extends Goal {
     }
     if (level != null) {
       level = 0;
+    }
+    if (incline != null) {
+      incline = 0;
     }
   }
 
@@ -276,10 +290,14 @@ class CardioGoal extends Goal {
       parts.add('Level: ${level!.toStringAsFixed(1)}');
     }
 
+    if (incline != null) {
+      parts.add('Incline: ${incline!.toStringAsFixed(1)}');
+    }
+
     return parts.join(', ');
   }
 
   @override
   List<Object?> get props =>
-      [id, duration, heartRate, speed, distance, intensity, level];
+      [id, duration, heartRate, speed, distance, intensity, level, incline];
 }

@@ -341,6 +341,20 @@ class _ActivityPageState extends State<ActivityPage>
                 onChanged: (value) => setState(() => goal.actual.level = value),
               ),
             ],
+            if (goal.actual.incline != null) ...[
+              NumStatTile<double>(
+                icon: ui.stat.incline.icon,
+                iconColor: ui.stat.incline.color,
+                title: ui.stat.incline.name,
+                value: actual.incline!,
+                minValue: ui.stat.incline.minValue,
+                maxValue: ui.stat.incline.maxValue,
+                valueFormatter: (value) =>
+                    '${value.toStringAsFixed(1)} / ${goal.goal.incline!.toStringAsFixed(1)}',
+                onChanged: (value) =>
+                    setState(() => goal.actual.incline = value),
+              ),
+            ],
           ];
 
     return SingleChildScrollView(
@@ -368,6 +382,7 @@ class _ActivityPageState extends State<ActivityPage>
                     goal.actual.distance = goal.goal.distance;
                     goal.actual.intensity = goal.goal.intensity;
                     goal.actual.level = goal.goal.level;
+                    goal.actual.incline = goal.goal.incline;
                     initCardioStopWatchTimer(goal);
                   });
                 },
@@ -1080,6 +1095,13 @@ class _ActivityPageState extends State<ActivityPage>
             text: '${ui.stat.level.name}: ${goal.actual.level}',
             icon: ui.stat.level.icon,
             iconColor: ui.stat.level.color,
+            endGap: 8,
+          ),
+        if (goal.actual.incline != null)
+          IconText(
+            text: '${ui.stat.incline.name}: ${goal.actual.incline}',
+            icon: ui.stat.incline.icon,
+            iconColor: ui.stat.incline.color,
             endGap: 8,
           ),
       ],

@@ -22,6 +22,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
   double distance = 0;
   double intensity = 0;
   double level = 0;
+  double incline = 0;
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
     distance = widget.goal.distance ?? ui.stat.distance.minValue + 0.0;
     intensity = widget.goal.intensity ?? ui.stat.intensity.minValue + 0.0;
     level = widget.goal.level ?? ui.stat.level.minValue + 0.0;
+    incline = widget.goal.incline ?? ui.stat.incline.minValue + 0.0;
 
     super.initState();
   }
@@ -46,7 +48,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
           shrinkWrap: true,
           crossAxisCount: 2,
           physics: NeverScrollableScrollPhysics(),
-          childAspectRatio: 1 / 1,
+          childAspectRatio: 1.25 / 1,
           children: [
             Opacity(
               opacity: duration != Duration.zero ? 1 : 0.5,
@@ -119,6 +121,18 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
                 maxValue: ui.stat.level.maxValue,
               ),
             ),
+            Opacity(
+              opacity: incline != ui.stat.incline.minValue + 0.0 ? 1 : 0.5,
+              child: NumStatTile<double>(
+                icon: ui.stat.incline.icon,
+                iconColor: ui.stat.incline.color,
+                title: ui.stat.incline.name,
+                value: incline,
+                onChanged: (value) => setState(() => incline = value),
+                minValue: ui.stat.incline.minValue,
+                maxValue: ui.stat.incline.maxValue,
+              ),
+            ),
           ],
         ),
       ),
@@ -153,6 +167,8 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
         : null;
     final level =
         this.level != ui.stat.level.minValue + 0.0 ? this.level : null;
+    final incline =
+        this.incline != ui.stat.incline.minValue + 0.0 ? this.incline : null;
 
     return CardioGoal(
       id: widget.goal.id,
@@ -162,6 +178,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
       distance: distance,
       intensity: intensity,
       level: level,
+      incline: incline,
     );
   }
 }

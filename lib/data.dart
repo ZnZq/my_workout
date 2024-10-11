@@ -57,8 +57,15 @@ class _Stat {
   );
   StatRangeData level = StatRangeData(
     name: 'Level',
-    icon: Icons.trending_up,
+    icon: Icons.leaderboard,
     color: Colors.yellow,
+    minValue: 0,
+    maxValue: 999,
+  );
+  StatRangeData incline = StatRangeData(
+    name: 'Incline',
+    icon: Icons.trending_up,
+    color: Colors.lightBlue,
     minValue: 0,
     maxValue: 999,
   );

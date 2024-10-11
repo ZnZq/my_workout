@@ -70,6 +70,14 @@ class CardioGoalProgressStats extends StatelessWidget {
                 iconColor: ui.stat.level.color,
                 endGap: 8,
               ),
+            if (goal.goal.incline != null)
+              IconText(
+                text:
+                    '${goal.actual.incline!.toStringAsFixed(1)}/${goal.goal.incline!.toStringAsFixed(1)}',
+                icon: ui.stat.incline.icon,
+                iconColor: ui.stat.incline.color,
+                endGap: 8,
+              ),
           ],
         ),
       ],

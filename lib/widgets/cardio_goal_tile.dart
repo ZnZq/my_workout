@@ -80,6 +80,14 @@ class CardioGoalTile extends StatelessWidget {
                     iconColor: ui.stat.level.color,
                     endGap: 8,
                   ),
+                if (goal.incline != null)
+                  IconText(
+                    text:
+                        '${ui.stat.incline.name}: ${goal.incline!.toStringAsFixed(1)}',
+                    icon: ui.stat.incline.icon,
+                    iconColor: ui.stat.incline.color,
+                    endGap: 8,
+                  ),
               ],
             ),
           ],
