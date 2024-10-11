@@ -26,7 +26,11 @@ class TextInputDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(title),
-      content: TextField(controller: controller, autofocus: true),
+      content: TextField(
+        controller: controller,
+        autofocus: true,
+        textCapitalization: TextCapitalization.words,
+      ),
       actions: [
         TextButton(
           onPressed: () {
