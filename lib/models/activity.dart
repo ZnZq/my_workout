@@ -56,6 +56,35 @@ class Activity with EquatableMixin {
     };
   }
 
+  String generateReport() {
+    final buffer = StringBuffer();
+    buffer.writeln('Activity: $title');
+    buffer.writeln('Date: ${dateFormat.format(date)}');
+    buffer.writeln('Status: ${status.name}');
+    buffer.writeln('Exercises:');
+
+    for (final exercisePair in exercises.indexed) {
+      final exerciseIndex = exercisePair.$1 + 1;
+      final exercise = exercisePair.$2;
+
+      buffer.writeln(
+          '$exerciseIndex. ${exercise.name}. ${exercise.status.name}:');
+      for (final goalPair in exercise.goalProgress.indexed) {
+        final goalIndex = goalPair.$1 + 1;
+        final goal = goalPair.$2;
+
+        final header = goal.generateReportHeader(goalIndex);
+        buffer.writeln('    $header');
+        final goalReport = goal.generateReport();
+        for (final goalReportLine in goalReport) {
+          buffer.writeln('        * $goalReportLine');
+        }
+      }
+    }
+
+    return buffer.toString();
+  }
+
   @override
   List<Object?> get props => [id, title, date, status, exercises];
 

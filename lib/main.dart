@@ -4,6 +4,7 @@ import 'package:my_workout/data.dart' as data;
 import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
+import 'package:my_workout/pages/activity/activity_report_page.dart';
 import 'package:my_workout/pages/activity/actvities_page.dart';
 import 'package:my_workout/pages/main/main_page.dart';
 import 'package:my_workout/pages/program/program_page.dart';
@@ -44,6 +45,14 @@ class MainApp extends StatelessWidget {
           final activity = settings.arguments as Activity;
           return MaterialPageRoute<Activity?>(
             builder: (context) => ActivityPage(activity: activity),
+          );
+        }
+
+        if (settings.name == ActivityReportPage.route &&
+            settings.arguments != null) {
+          final activity = settings.arguments as Activity;
+          return MaterialPageRoute<String?>(
+            builder: (context) => ActivityReportPage(activity: activity),
           );
         }
 

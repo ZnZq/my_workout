@@ -11,6 +11,7 @@ import 'package:my_workout/models/goal_progress.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
+import 'package:my_workout/pages/activity/activity_report_page.dart';
 import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/activity_exercise_tab.dart';
@@ -114,6 +115,14 @@ class _ActivityPageState extends State<ActivityPage>
         title = programInfo['title']!;
       });
     }
+  }
+
+  void _generateReport() async {
+    final activity = buildActivity(true);
+    final report = await Navigator.of(context)
+        .pushNamed<String?>(ActivityReportPage.route, arguments: activity);
+
+    print(report);
   }
 
   Activity buildActivity(bool withClone) {
@@ -221,9 +230,38 @@ class _ActivityPageState extends State<ActivityPage>
         appBar: AppBar(
           title: Text(title),
           actions: [
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: _editInfo,
+            PopupMenuButton(
+              icon: Icon(Icons.more_vert),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    value: 'rename',
+                    child: IconText(
+                      icon: Icons.edit,
+                      text: 'Rename',
+                      iconColor: Colors.white,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'report',
+                    child: IconText(
+                      icon: Icons.receipt_long_outlined,
+                      text: 'Report',
+                      iconColor: Colors.white,
+                    ),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                switch (value) {
+                  case 'rename':
+                    _editInfo();
+                    break;
+                  case 'report':
+                    _generateReport();
+                    break;
+                }
+              },
             ),
           ],
         ),

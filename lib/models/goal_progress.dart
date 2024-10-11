@@ -56,6 +56,14 @@ class GoalProgress<T extends Goal> with EquatableMixin {
     goal = GoalFactory.fromJson(json['goal']) as T;
   }
 
+  List<String> generateReport() {
+    throw Exception('Not implemented');
+  }
+
+  String generateReportHeader(int index) {
+    throw Exception('Not implemented');
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

@@ -15,29 +15,10 @@ class WeightGoalProgressStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final completeSets = goal.completedSets;
-    final completeRepsTotal =
-        completeSets.map((e) => e.reps).fold(0.0, (a, b) => a + b);
-    final completedWeightTotal =
-        completeSets.map((e) => e.weight).fold(0.0, (a, b) => a + b);
-    final completedWeightAvg = completedWeightTotal == 0
-        ? 0
-        : completedWeightTotal / completeSets.length;
-
-    var completeRepsCount = completeRepsTotal / completeSets.length;
-    if (completeRepsCount.isNaN) {
-      completeRepsCount = 0;
-    }
+    final info = goal.getInfo();
 
     final completeRepsCountStr =
-        completeRepsCount.toStringAsFixed(completeRepsCount % 1 == 0 ? 0 : 1);
-
-    final maxComplete = goal.goal.sets *
-        goal.goal.reps *
-        (goal.goal.weight == 0 ? 1 : goal.goal.weight);
-    final currentComplete = completeSets.length *
-        completeRepsCount *
-        (goal.goal.weight == 0 ? 1 : completedWeightAvg);
+        info.completedReps.toStringAsFixed(info.completedReps % 1 == 0 ? 0 : 1);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -47,13 +28,13 @@ class WeightGoalProgressStats extends StatelessWidget {
           alignment: wrapAlignment,
           children: [
             IconText(
-              text: '${completeSets.length}/${goal.goal.sets}',
+              text: '${info.completedSets}/${info.totalSets}',
               icon: ui.stat.sets.icon,
               iconColor: ui.stat.sets.color,
               endGap: 8,
             ),
             IconText(
-              text: '$completeRepsCountStr/${goal.goal.reps}',
+              text: '$completeRepsCountStr/${info.totalReps}',
               icon: ui.stat.reps.icon,
               iconColor: ui.stat.reps.color,
               endGap: 8,
@@ -61,14 +42,13 @@ class WeightGoalProgressStats extends StatelessWidget {
             if (goal.goal.weight != 0)
               IconText(
                 text:
-                    '${completedWeightAvg.toStringAsFixed(1)}/${goal.goal.weight.toStringAsFixed(1)}',
+                    '${info.completedWeight.toStringAsFixed(1)}/${info.totalWeight.toStringAsFixed(1)}',
                 icon: ui.stat.weight.icon,
                 iconColor: ui.stat.weight.color,
                 endGap: 8,
               ),
             IconText(
-              text:
-                  'Goal completed by ${(currentComplete / maxComplete * 100).toStringAsFixed(2)}%',
+              text: 'Goal completed by ${info.completedBy.toStringAsFixed(2)}%',
               icon: Icons.query_stats,
               iconColor: Colors.indigo,
             ),

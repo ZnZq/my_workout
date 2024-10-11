@@ -36,6 +36,47 @@ class CardioGoalProgress extends GoalProgress<CardioGoal> {
   }
 
   @override
+  String generateReportHeader(int index) {
+    final data = [
+      if (actual.duration != null && goal.duration != null)
+        'Duration: ${formatDuration(actual.duration!)}/${formatDuration(goal.duration!)}',
+      if (actual.duration != null && goal.duration == null)
+        'Duration: ${formatDuration(actual.duration!)}',
+      if (actual.heartRate != null && goal.heartRate != null)
+        'Heart Rate: ${actual.heartRate}/${goal.heartRate}',
+      if (actual.heartRate != null && goal.heartRate == null)
+        'Heart Rate: ${actual.heartRate}',
+      if (actual.speed != null && goal.speed != null)
+        'Speed: ${actual.speed!.toStringAsFixed(1)}/${goal.speed!.toStringAsFixed(1)}',
+      if (actual.speed != null && goal.speed == null)
+        'Speed: ${actual.speed!.toStringAsFixed(1)}',
+      if (actual.distance != null && goal.distance != null)
+        'Distance: ${actual.distance!.toStringAsFixed(1)}/${goal.distance!.toStringAsFixed(1)}',
+      if (actual.distance != null && goal.distance == null)
+        'Distance: ${actual.distance!.toStringAsFixed(1)}',
+      if (actual.intensity != null && goal.intensity != null)
+        'Intensity: ${actual.intensity!.toStringAsFixed(1)}/${goal.intensity!.toStringAsFixed(1)}',
+      if (actual.intensity != null && goal.intensity == null)
+        'Intensity: ${actual.intensity!.toStringAsFixed(1)}',
+      if (actual.level != null && goal.level != null)
+        'Level: ${actual.level!.toStringAsFixed(1)}/${goal.level!.toStringAsFixed(1)}',
+      if (actual.level != null && goal.level == null)
+        'Level: ${actual.level!.toStringAsFixed(1)}',
+      if (actual.incline != null && goal.incline != null)
+        'Incline: ${actual.incline!.toStringAsFixed(1)}/${goal.incline!.toStringAsFixed(1)}',
+      if (actual.incline != null && goal.incline == null)
+        'Incline: ${actual.incline!.toStringAsFixed(1)}',
+    ];
+
+    return '$index. ${data.join(', ')}';
+  }
+
+  @override
+  List<String> generateReport() {
+    return [];
+  }
+
+  @override
   CardioGoalProgress clone() {
     return CardioGoalProgress(
       goal: goal.clone(),
