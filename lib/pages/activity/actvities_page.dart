@@ -113,7 +113,6 @@ class ActvitiesPage extends StatelessWidget {
     }
 
     final activity = Activity.fromProgram(program: program);
-    Storage.activityStorage.insertAt(0, activity);
 
     _openActivity(context, activity);
   }
