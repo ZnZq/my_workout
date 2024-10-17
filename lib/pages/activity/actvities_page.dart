@@ -118,7 +118,7 @@ class ActvitiesPage extends StatelessWidget {
     _openActivity(context, activity);
   }
 
-  void _openActivity(BuildContext context, Activity activity) async {
+  void _openActivity(BuildContext context, Activity activity) {
     Navigator.of(context).pushNamed(ActivityPage.route, arguments: activity);
   }
 }

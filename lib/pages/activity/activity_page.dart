@@ -11,7 +11,7 @@ import 'package:my_workout/models/goal_progress.dart';
 import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
-import 'package:my_workout/pages/activity/activity_report_page.dart';
+import 'package:my_workout/pages/activity/report_page.dart';
 import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/activity_exercise_tab.dart';
@@ -117,12 +117,10 @@ class _ActivityPageState extends State<ActivityPage>
     }
   }
 
-  void _generateReport() async {
+  void _generateReport() {
     final activity = buildActivity(true);
-    final report = await Navigator.of(context)
-        .pushNamed<String?>(ActivityReportPage.route, arguments: activity);
-
-    print(report);
+    Navigator.of(context)
+        .pushNamed<String?>(ReportPage.route, arguments: activity);
   }
 
   Activity buildActivity(bool withClone) {

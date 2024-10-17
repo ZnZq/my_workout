@@ -21,7 +21,7 @@ class ProgramsPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
-              _addProgram(context);
+              _openProgram(context, Program(title: 'New program'));
             },
           ),
         ],
@@ -70,7 +70,7 @@ class ProgramsPage extends StatelessWidget {
                 ? Text(program.description)
                 : null,
             onTap: () {
-              _editProgram(context, program);
+              _openProgram(context, program);
             },
           ),
         ),
@@ -78,19 +78,7 @@ class ProgramsPage extends StatelessWidget {
     );
   }
 
-  void _addProgram(BuildContext context) async {
-    final program =
-        await Navigator.of(context).pushNamed<Program?>(ProgramPage.route);
-    if (program != null) {
-      Storage.programStorage.insertAt(0, program);
-    }
-  }
-
-  void _editProgram(BuildContext context, Program program) async {
-    final editedProgram = await Navigator.of(context)
-        .pushNamed<Program?>(ProgramPage.route, arguments: program);
-    if (editedProgram != null) {
-      Storage.programStorage.update(editedProgram);
-    }
+  void _openProgram(BuildContext context, Program program) {
+    Navigator.of(context).pushNamed(ProgramPage.route, arguments: program);
   }
 }

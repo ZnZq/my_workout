@@ -3,9 +3,10 @@ import 'package:my_workout/data.dart';
 import 'package:my_workout/models/activity_exercise.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/progress_status.dart';
+import 'package:my_workout/models/reportable.dart';
 import 'package:my_workout/utils.dart';
 
-class Activity with EquatableMixin {
+class Activity with EquatableMixin, Reportable {
   late final String id;
 
   String title = '';
@@ -56,6 +57,7 @@ class Activity with EquatableMixin {
     };
   }
 
+  @override
   String generateReport() {
     final buffer = StringBuffer();
     buffer.writeln('Activity: $title');

@@ -1,0 +1,3 @@
+mixin Reportable {
+  String generateReport();
+}

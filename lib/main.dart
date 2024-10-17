@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:my_workout/data.dart' as data;
 import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/program.dart';
+import 'package:my_workout/models/reportable.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
-import 'package:my_workout/pages/activity/activity_report_page.dart';
+import 'package:my_workout/pages/activity/report_page.dart';
 import 'package:my_workout/pages/activity/actvities_page.dart';
 import 'package:my_workout/pages/main/main_page.dart';
 import 'package:my_workout/pages/program/program_page.dart';
@@ -48,11 +49,10 @@ class MainApp extends StatelessWidget {
           );
         }
 
-        if (settings.name == ActivityReportPage.route &&
-            settings.arguments != null) {
-          final activity = settings.arguments as Activity;
+        if (settings.name == ReportPage.route && settings.arguments != null) {
+          final reportable = settings.arguments as Reportable;
           return MaterialPageRoute<String?>(
-            builder: (context) => ActivityReportPage(activity: activity),
+            builder: (context) => ReportPage(reportable: reportable),
           );
         }
 

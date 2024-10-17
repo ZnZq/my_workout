@@ -3,7 +3,10 @@ import 'package:my_workout/dialogs/program_exercise_dialog.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/program_exercise.dart';
+import 'package:my_workout/pages/activity/report_page.dart';
+import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
+import 'package:my_workout/widgets/icon_text.dart';
 
 class ProgramPage extends StatefulWidget {
   static const route = '/program';
@@ -19,7 +22,7 @@ class ProgramPage extends StatefulWidget {
   State<ProgramPage> createState() => _ProgramPageState();
 }
 
-class _ProgramPageState extends State<ProgramPage> {
+class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
   String title = '';
   String description = '';
   final List<ProgramExercise> exercises = [];
@@ -38,7 +41,14 @@ class _ProgramPageState extends State<ProgramPage> {
   }
 
   bool _isDirty() {
-    return buildProgram() != widget.program;
+    return buildProgram(false) != widget.program;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      _save();
+    }
   }
 
   void _onPopInvokedWithResult(
@@ -50,31 +60,9 @@ class _ProgramPageState extends State<ProgramPage> {
       return;
     }
 
-    final isDirty = _isDirty();
-    if (!isDirty) {
-      Navigator.of(context).pop();
-      return;
-    }
+    final program = _save();
 
-    final message = widget.isNew
-        ? 'You have unsaved changes, do you want to save this program?'
-        : 'You have unsaved changes, do you want to save changes to this program?';
-    final Map<String, dynamic> options = {
-      'Yes': true,
-      'No': false,
-      'Cancel': null,
-    };
-    final result = await askDialog(context, message, options: options);
-    if (!context.mounted || result == null) {
-      return;
-    }
-
-    if (result == true) {
-      _saveProgram();
-      return;
-    }
-
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(program);
   }
 
   @override
@@ -88,13 +76,38 @@ class _ProgramPageState extends State<ProgramPage> {
         appBar: AppBar(
           title: Text(title),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: _editInfo,
-            ),
-            IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: _isDirty() ? _saveProgram : null,
+            PopupMenuButton(
+              icon: Icon(Icons.more_vert),
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem(
+                    value: 'rename',
+                    child: IconText(
+                      icon: Icons.edit,
+                      text: 'Rename',
+                      iconColor: Colors.white,
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'report',
+                    child: IconText(
+                      icon: Icons.receipt_long_outlined,
+                      text: 'Report',
+                      iconColor: Colors.white,
+                    ),
+                  ),
+                ];
+              },
+              onSelected: (value) {
+                switch (value) {
+                  case 'rename':
+                    _editInfo();
+                    break;
+                  case 'report':
+                    _generateReport();
+                    break;
+                }
+              },
             ),
           ],
         ),
@@ -145,6 +158,12 @@ class _ProgramPageState extends State<ProgramPage> {
     );
   }
 
+  void _generateReport() {
+    final program = buildProgram(true);
+    Navigator.of(context)
+        .pushNamed<String?>(ReportPage.route, arguments: program);
+  }
+
   Widget _buildExerciseCard(
     ProgramExercise exercise,
     BuildContext context,
@@ -184,18 +203,24 @@ class _ProgramPageState extends State<ProgramPage> {
     );
   }
 
-  Program buildProgram() {
+  Program buildProgram(bool withClone) {
     return Program(
       id: widget.program.id,
       title: title,
       description: description,
-      exercises: exercises,
+      exercises:
+          withClone ? exercises.map((e) => e.clone()).toList() : exercises,
     );
   }
 
-  void _saveProgram() {
-    final program = buildProgram();
-    Navigator.of(context).pop(program);
+  Program? _save() {
+    final isDirty = _isDirty();
+    final program = isDirty ? buildProgram(true) : null;
+    if (program != null) {
+      Storage.programStorage.update(program, insertIndex: 0);
+    }
+
+    return program;
   }
 
   void _addExercise() async {

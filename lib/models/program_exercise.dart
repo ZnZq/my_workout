@@ -50,6 +50,17 @@ class ProgramExercise with EquatableMixin {
     );
   }
 
+  String generateReport(int index) {
+    final buffer = StringBuffer();
+    buffer.writeln('$index. ${executeMethod.name}. $name. Goals:');
+    for (final pair in goals.indexed) {
+      final index = pair.$1 + 1;
+      final goal = pair.$2;
+      buffer.writeln('    ${goal.generateReport(index)}');
+    }
+    return buffer.toString().trim();
+  }
+
   @override
   List<Object?> get props => [id, name, executeMethod, goals];
 

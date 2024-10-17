@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:my_workout/data.dart';
 import 'package:my_workout/models/program_exercise.dart';
+import 'package:my_workout/models/reportable.dart';
 
-class Program with EquatableMixin {
+class Program with EquatableMixin, Reportable {
   late final String id;
 
   String title = '';
@@ -38,6 +39,22 @@ class Program with EquatableMixin {
       'description': description,
       'exercises': exercises.map((e) => e.toJson()).toList(),
     };
+  }
+
+  @override
+  String generateReport() {
+    final buffer = StringBuffer();
+    buffer.writeln('Program: $title');
+    buffer.writeln('Description: $description');
+    buffer.writeln('Exercises:');
+
+    for (final pair in exercises.indexed) {
+      final index = pair.$1 + 1;
+      final exercise = pair.$2;
+      buffer.writeln(exercise.generateReport(index));
+    }
+
+    return buffer.toString();
   }
 
   @override

@@ -47,6 +47,8 @@ abstract class Goal with EquatableMixin {
 
   Goal clone();
 
+  String generateReport(int index);
+
   Goal.fromJson(Map json) {
     id = json['id'] ?? uuid.v4();
   }
@@ -104,6 +106,18 @@ class WeightGoal extends Goal {
       weight: weight,
       rest: rest,
     );
+  }
+
+  @override
+  String generateReport(int index) {
+    final data = [
+      'Sets: $sets',
+      'Reps: $reps',
+      if (weight != 0) 'Weight: $weight',
+      'Rest: ${formatDuration(rest)}',
+    ];
+
+    return '$index. ${data.join(', ')}';
   }
 
   @override
@@ -237,6 +251,21 @@ class CardioGoal extends Goal {
       level: level,
       incline: incline,
     );
+  }
+
+  @override
+  String generateReport(int index) {
+    final data = [
+      if (duration != null) 'Duration: ${formatDuration(duration!)}',
+      if (heartRate != null) 'Heart rate: $heartRate',
+      if (speed != null) 'Speed: ${speed!.toStringAsFixed(1)}',
+      if (distance != null) 'Distance: ${distance!.toStringAsFixed(1)}',
+      if (intensity != null) 'Intensity: ${intensity!.toStringAsFixed(1)}',
+      if (level != null) 'Level: ${level!.toStringAsFixed(1)}',
+      if (incline != null) 'Incline: ${incline!.toStringAsFixed(1)}',
+    ];
+
+    return '$index. ${data.join(', ')}';
   }
 
   clear() {
