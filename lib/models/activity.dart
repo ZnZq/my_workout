@@ -3,10 +3,10 @@ import 'package:my_workout/data.dart';
 import 'package:my_workout/models/activity_exercise.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/progress_status.dart';
-import 'package:my_workout/models/reportable.dart';
+import 'package:my_workout/mixins/reportable_mixin.dart';
 import 'package:my_workout/utils.dart';
 
-class Activity with EquatableMixin, Reportable {
+class Activity with EquatableMixin, ReportableMixin {
   late final String id;
 
   String title = '';

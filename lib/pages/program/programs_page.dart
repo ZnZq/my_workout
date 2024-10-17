@@ -79,6 +79,7 @@ class ProgramsPage extends StatelessWidget {
   }
 
   void _openProgram(BuildContext context, Program program) {
-    Navigator.of(context).pushNamed(ProgramPage.route, arguments: program);
+    Navigator.of(context)
+        .restorablePushNamed(ProgramPage.route, arguments: program.toJson());
   }
 }

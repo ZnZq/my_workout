@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_workout/data.dart' as data;
 import 'package:my_workout/models/activity.dart';
 import 'package:my_workout/models/program.dart';
-import 'package:my_workout/models/reportable.dart';
+import 'package:my_workout/mixins/reportable_mixin.dart';
 import 'package:my_workout/pages/activity/activity_page.dart';
 import 'package:my_workout/pages/activity/report_page.dart';
 import 'package:my_workout/pages/activity/actvities_page.dart';
@@ -27,6 +27,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      restorationScopeId: 'main_app',
       debugShowCheckedModeBanner: kDebugMode,
       initialRoute: MainPage.route,
       theme: ThemeData.dark(),
@@ -37,22 +38,25 @@ class MainApp extends StatelessWidget {
       },
       onGenerateRoute: (settings) {
         if (settings.name == ProgramPage.route) {
-          final program = settings.arguments as Program?;
+          final program = settings.arguments as Map<String, dynamic>?;
           return MaterialPageRoute<Program?>(
             builder: (context) => ProgramPage(program: program),
+            settings: settings,
           );
         }
         if (settings.name == ActivityPage.route && settings.arguments != null) {
           final activity = settings.arguments as Activity;
           return MaterialPageRoute<Activity?>(
             builder: (context) => ActivityPage(activity: activity),
+            settings: settings,
           );
         }
 
         if (settings.name == ReportPage.route && settings.arguments != null) {
-          final reportable = settings.arguments as Reportable;
+          final reportable = settings.arguments as ReportableMixin;
           return MaterialPageRoute<String?>(
             builder: (context) => ReportPage(reportable: reportable),
+            settings: settings,
           );
         }
 

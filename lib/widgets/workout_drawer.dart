@@ -20,13 +20,13 @@ class WorkoutDrawer extends StatelessWidget {
           ListTile(
             title: const Text('Activity'),
             onTap: () {
-              Navigator.of(context).pushNamed(ActvitiesPage.route);
+              Navigator.of(context).restorablePushNamed(ActvitiesPage.route);
             },
           ),
           ListTile(
             title: const Text('Program'),
             onTap: () {
-              Navigator.of(context).pushNamed(ProgramsPage.route);
+              Navigator.of(context).restorablePushNamed(ProgramsPage.route);
             },
           ),
         ],

@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:my_workout/data.dart';
+import 'package:my_workout/mixins/jsonable_mixin.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal.dart';
 
-class ProgramExercise with EquatableMixin {
+class ProgramExercise with EquatableMixin, JsonableMixin<ProgramExercise> {
   late final String id;
 
   String name = '';
@@ -23,15 +24,25 @@ class ProgramExercise with EquatableMixin {
     id = uuid.v4();
   }
 
-  ProgramExercise.fromJson(Map json) {
-    id = json['id'] ?? uuid.v4();
-    name = json['name'] as String;
-    executeMethod = ExerciseExecuteMethod.values[json['executeMethod'] as int];
-    goals = (json['goals'] as List<dynamic>)
+  @override
+  factory ProgramExercise.fromJson(Map json) {
+    final id = json['id'] ?? uuid.v4();
+    final name = json['name'] as String;
+    final executeMethod =
+        ExerciseExecuteMethod.values[json['executeMethod'] as int];
+    final goals = (json['goals'] as List<dynamic>)
         .map((e) => GoalFactory.fromJson(e))
         .toList();
+
+    return ProgramExercise(
+      id: id,
+      name: name,
+      executeMethod: executeMethod,
+      goals: goals,
+    );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

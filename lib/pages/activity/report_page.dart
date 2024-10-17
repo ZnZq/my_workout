@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_workout/models/reportable.dart';
+import 'package:my_workout/mixins/reportable_mixin.dart';
 import 'package:my_workout/widgets/icon_text.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReportPage extends StatelessWidget {
   static const String route = '/report';
 
-  final Reportable reportable;
+  final ReportableMixin reportable;
 
   const ReportPage({super.key, required this.reportable});
 

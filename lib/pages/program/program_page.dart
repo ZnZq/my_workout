@@ -4,6 +4,7 @@ import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/program.dart';
 import 'package:my_workout/models/program_exercise.dart';
 import 'package:my_workout/pages/activity/report_page.dart';
+import 'package:my_workout/restorable/restorable_list.dart';
 import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/icon_text.dart';
@@ -13,8 +14,10 @@ class ProgramPage extends StatefulWidget {
   late final Program program;
   late final bool isNew;
 
-  ProgramPage({super.key, Program? program}) {
-    this.program = program ?? Program(title: 'New program');
+  ProgramPage({super.key, Map<String, dynamic>? program}) {
+    this.program = program != null
+        ? Program.fromJson(program)
+        : Program(title: 'New program');
     isNew = program == null;
   }
 
@@ -22,21 +25,36 @@ class ProgramPage extends StatefulWidget {
   State<ProgramPage> createState() => _ProgramPageState();
 }
 
-class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
-  String title = '';
-  String description = '';
-  final List<ProgramExercise> exercises = [];
+class _ProgramPageState extends State<ProgramPage>
+    with WidgetsBindingObserver, RestorationMixin {
+  final RestorableString title = RestorableString('');
+  final RestorableString description = RestorableString('');
+  final RestorableList<ProgramExercise> exercises =
+      RestorableList(ProgramExercise.fromJson, []);
+  // final List<ProgramExercise> exercises = [];
 
   @override
   void initState() {
-    title = widget.program.title;
-    description = widget.program.description;
-    exercises.addAll(widget.program.exercises.map((e) => e.clone()));
-
     super.initState();
 
     if (widget.isNew) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _editInfo());
+    }
+  }
+
+  @override
+  String? get restorationId => 'program_page';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(title, 'title');
+    registerForRestoration(description, 'description');
+    registerForRestoration(exercises, 'exercises');
+
+    if (initialRestore) {
+      title.value = widget.program.title;
+      description.value = widget.program.description;
+      exercises.value = widget.program.exercises.map((e) => e.clone()).toList();
     }
   }
 
@@ -74,7 +92,7 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(title.value),
           actions: [
             PopupMenuButton(
               icon: const Icon(Icons.more_vert),
@@ -206,10 +224,11 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
   Program buildProgram(bool withClone) {
     return Program(
       id: widget.program.id,
-      title: title,
-      description: description,
-      exercises:
-          withClone ? exercises.map((e) => e.clone()).toList() : exercises,
+      title: title.value,
+      description: description.value,
+      exercises: withClone
+          ? exercises.value.map((e) => e.clone()).toList()
+          : exercises.value,
     );
   }
 
@@ -232,7 +251,9 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
     );
 
     if (exercise != null) {
-      setState(() => exercises.add(exercise));
+      setState(() {
+        exercises.add(exercise);
+      });
     }
   }
 
@@ -255,11 +276,11 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
 
   void _editInfo() async {
     var programInfo =
-        await infoDialog(context, title, description: description);
+        await infoDialog(context, title.value, description: description.value);
     if (programInfo != null) {
       setState(() {
-        title = programInfo['title']!;
-        description = programInfo['description']!;
+        title.value = programInfo['title']!;
+        description.value = programInfo['description']!;
       });
     }
   }

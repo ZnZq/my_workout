@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:my_workout/data.dart';
 import 'package:my_workout/models/program_exercise.dart';
-import 'package:my_workout/models/reportable.dart';
+import 'package:my_workout/mixins/reportable_mixin.dart';
 
-class Program with EquatableMixin, Reportable {
+class Program with EquatableMixin, ReportableMixin {
   late final String id;
 
   String title = '';

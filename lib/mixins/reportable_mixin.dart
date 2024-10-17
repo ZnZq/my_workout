@@ -1,3 +1,3 @@
-mixin Reportable {
+mixin ReportableMixin {
   String generateReport();
 }
