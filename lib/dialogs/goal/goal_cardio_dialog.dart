@@ -39,118 +39,121 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('${widget.goal.executeMethod.name} goal'),
-      actionsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: 2,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.25 / 1,
-          children: [
-            Opacity(
-              opacity: duration != Duration.zero ? 1 : 0.5,
-              child: DurationStatTile(
-                icon: ui.stat.duration.icon,
-                iconColor: ui.stat.duration.color,
-                title: ui.stat.duration.name,
-                baseUnit: BaseUnit.minute,
-                value: duration,
-                onChanged: (value) => setState(() => duration = value),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          final goal = generateGoal();
+          Navigator.of(context).pop(goal);
+        }
+      },
+      child: AlertDialog(
+        title: Text('${widget.goal.executeMethod.name} goal'),
+        actionsPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            physics: const NeverScrollableScrollPhysics(),
+            childAspectRatio: 1.25 / 1,
+            children: [
+              Opacity(
+                opacity: duration != Duration.zero ? 1 : 0.5,
+                child: DurationStatTile(
+                  icon: ui.stat.duration.icon,
+                  iconColor: ui.stat.duration.color,
+                  title: ui.stat.duration.name,
+                  baseUnit: BaseUnit.minute,
+                  value: duration,
+                  onChanged: (value) => setState(() => duration = value),
+                ),
               ),
-            ),
-            Opacity(
-              opacity: heartRate != ui.stat.heartRate.minValue ? 1 : 0.5,
-              child: NumStatTile<int>(
-                icon: ui.stat.heartRate.icon,
-                iconColor: ui.stat.heartRate.color,
-                title: ui.stat.heartRate.name,
-                value: heartRate,
-                onChanged: (value) => setState(() => heartRate = value),
-                minValue: ui.stat.heartRate.minValue,
-                maxValue: ui.stat.heartRate.maxValue,
+              Opacity(
+                opacity: heartRate != ui.stat.heartRate.minValue ? 1 : 0.5,
+                child: NumStatTile<int>(
+                  icon: ui.stat.heartRate.icon,
+                  iconColor: ui.stat.heartRate.color,
+                  title: ui.stat.heartRate.name,
+                  value: heartRate,
+                  onChanged: (value) => setState(() => heartRate = value),
+                  minValue: ui.stat.heartRate.minValue,
+                  maxValue: ui.stat.heartRate.maxValue,
+                ),
               ),
-            ),
-            Opacity(
-              opacity: speed != ui.stat.speed.minValue + 0.0 ? 1 : 0.5,
-              child: NumStatTile<double>(
-                icon: ui.stat.speed.icon,
-                iconColor: ui.stat.speed.color,
-                title: ui.stat.speed.name,
-                value: speed,
-                onChanged: (value) => setState(() => speed = value),
-                minValue: ui.stat.speed.minValue,
-                maxValue: ui.stat.speed.maxValue,
+              Opacity(
+                opacity: speed != ui.stat.speed.minValue + 0.0 ? 1 : 0.5,
+                child: NumStatTile<double>(
+                  icon: ui.stat.speed.icon,
+                  iconColor: ui.stat.speed.color,
+                  title: ui.stat.speed.name,
+                  value: speed,
+                  onChanged: (value) => setState(() => speed = value),
+                  minValue: ui.stat.speed.minValue,
+                  maxValue: ui.stat.speed.maxValue,
+                ),
               ),
-            ),
-            Opacity(
-              opacity: distance != ui.stat.distance.minValue + 0.0 ? 1 : 0.5,
-              child: NumStatTile<double>(
-                icon: ui.stat.distance.icon,
-                iconColor: ui.stat.distance.color,
-                title: ui.stat.distance.name,
-                value: distance,
-                onChanged: (value) => setState(() => distance = value),
-                minValue: ui.stat.distance.minValue,
-                maxValue: ui.stat.distance.maxValue,
+              Opacity(
+                opacity: distance != ui.stat.distance.minValue + 0.0 ? 1 : 0.5,
+                child: NumStatTile<double>(
+                  icon: ui.stat.distance.icon,
+                  iconColor: ui.stat.distance.color,
+                  title: ui.stat.distance.name,
+                  value: distance,
+                  onChanged: (value) => setState(() => distance = value),
+                  minValue: ui.stat.distance.minValue,
+                  maxValue: ui.stat.distance.maxValue,
+                ),
               ),
-            ),
-            Opacity(
-              opacity: intensity != ui.stat.intensity.minValue + 0.0 ? 1 : 0.5,
-              child: NumStatTile<double>(
-                icon: ui.stat.intensity.icon,
-                iconColor: ui.stat.intensity.color,
-                title: ui.stat.intensity.name,
-                value: intensity,
-                onChanged: (value) => setState(() => intensity = value),
-                minValue: ui.stat.intensity.minValue,
-                maxValue: ui.stat.intensity.maxValue,
+              Opacity(
+                opacity:
+                    intensity != ui.stat.intensity.minValue + 0.0 ? 1 : 0.5,
+                child: NumStatTile<double>(
+                  icon: ui.stat.intensity.icon,
+                  iconColor: ui.stat.intensity.color,
+                  title: ui.stat.intensity.name,
+                  value: intensity,
+                  onChanged: (value) => setState(() => intensity = value),
+                  minValue: ui.stat.intensity.minValue,
+                  maxValue: ui.stat.intensity.maxValue,
+                ),
               ),
-            ),
-            Opacity(
-              opacity: level != ui.stat.level.minValue + 0.0 ? 1 : 0.5,
-              child: NumStatTile<double>(
-                icon: ui.stat.level.icon,
-                iconColor: ui.stat.level.color,
-                title: ui.stat.level.name,
-                value: level,
-                onChanged: (value) => setState(() => level = value),
-                minValue: ui.stat.level.minValue,
-                maxValue: ui.stat.level.maxValue,
+              Opacity(
+                opacity: level != ui.stat.level.minValue + 0.0 ? 1 : 0.5,
+                child: NumStatTile<double>(
+                  icon: ui.stat.level.icon,
+                  iconColor: ui.stat.level.color,
+                  title: ui.stat.level.name,
+                  value: level,
+                  onChanged: (value) => setState(() => level = value),
+                  minValue: ui.stat.level.minValue,
+                  maxValue: ui.stat.level.maxValue,
+                ),
               ),
-            ),
-            Opacity(
-              opacity: incline != ui.stat.incline.minValue + 0.0 ? 1 : 0.5,
-              child: NumStatTile<double>(
-                icon: ui.stat.incline.icon,
-                iconColor: ui.stat.incline.color,
-                title: ui.stat.incline.name,
-                value: incline,
-                onChanged: (value) => setState(() => incline = value),
-                minValue: ui.stat.incline.minValue,
-                maxValue: ui.stat.incline.maxValue,
+              Opacity(
+                opacity: incline != ui.stat.incline.minValue + 0.0 ? 1 : 0.5,
+                child: NumStatTile<double>(
+                  icon: ui.stat.incline.icon,
+                  iconColor: ui.stat.incline.color,
+                  title: ui.stat.incline.name,
+                  value: incline,
+                  onChanged: (value) => setState(() => incline = value),
+                  minValue: ui.stat.incline.minValue,
+                  maxValue: ui.stat.incline.maxValue,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () {
-            final goal = generateGoal();
-            Navigator.of(context).pop(goal);
-          },
-          child: const Text('Save'),
-        ),
-      ],
     );
   }
 

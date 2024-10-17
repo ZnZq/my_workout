@@ -143,7 +143,7 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
                     onTap: _addExercise,
                     child: const Center(
                       child: Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(12),
                         child: Icon(Icons.add),
                       ),
                     ),

@@ -57,21 +57,6 @@ class WeightGoalTile extends StatelessWidget {
               ),
           ],
         ),
-        // child: Row(
-        //   children: [
-        //     Column(
-        //       crossAxisAlignment: CrossAxisAlignment.start,
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-
-        //         Text(
-        //             'Sets: ${goal.sets}, Reps: ${goal.reps}, Rest: ${formatDuration(goal.rest)}'),
-        //         if (goal.weight > 0)
-        //           Text('Weight: ${goal.weight.toStringAsFixed(1)}'),
-        //       ],
-        //     ),
-        //   ],
-        // ),
       ),
     );
   }

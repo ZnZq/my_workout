@@ -35,72 +35,58 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Row(
-        children: [
-          const Text('Goal progresses'),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () async {
-              final goal =
-                  widget.exercise.goalProgress.lastOrNull?.goal.clone() ??
-                      Goal.create(widget.exercise.executeMethod);
-              final newGoal = await goalDialog(context, goal);
-              if (newGoal != null) {
-                setState(() => widget.exercise.goalProgress
-                    .add(GoalProgress.fromGoal(newGoal)));
-              }
-            },
-          ),
-        ],
-      ),
-      contentPadding: const EdgeInsets.only(right: 8, left: 8),
+      title: const Text('Goal progresses'),
+      contentPadding: const EdgeInsets.only(right: 12, left: 12),
       content: Form(
         key: _formKey,
         child: SizedBox(
           width: double.maxFinite,
           height: MediaQuery.sizeOf(context).height * 0.5,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) {
-                    widget.exercise.name = value;
-                  },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a name';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      widget.exercise.name = value;
+                    },
+                  ),
                 ),
-              ),
-              SegmentedButton<ExerciseExecuteMethod>(
-                showSelectedIcon: false,
-                multiSelectionEnabled: false,
-                emptySelectionAllowed: false,
-                selected: {widget.exercise.executeMethod},
-                segments: [
-                  for (var value in ExerciseExecuteMethod.values)
-                    ButtonSegment<ExerciseExecuteMethod>(
-                      value: value,
-                      label: IconText(
-                          text: value.name,
-                          icon: value.icon,
-                          iconColor: value.color),
-                      enabled: value == widget.exercise.executeMethod,
-                    ),
-                ],
-                onSelectionChanged: (value) {},
-              ),
-              const SizedBox(height: 4),
-              Expanded(
-                child: ReorderableListView.builder(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: SegmentedButton<ExerciseExecuteMethod>(
+                    showSelectedIcon: false,
+                    multiSelectionEnabled: false,
+                    emptySelectionAllowed: false,
+                    selected: {widget.exercise.executeMethod},
+                    segments: [
+                      for (var value in ExerciseExecuteMethod.values)
+                        ButtonSegment<ExerciseExecuteMethod>(
+                          value: value,
+                          label: IconText(
+                              text: value.name,
+                              icon: value.icon,
+                              iconColor: value.color),
+                          enabled: value == widget.exercise.executeMethod,
+                        ),
+                    ],
+                    onSelectionChanged: (value) {},
+                  ),
+                ),
+                const SizedBox(height: 4),
+                ReorderableListView.builder(
+                  shrinkWrap: true,
                   itemCount: widget.exercise.goalProgress.length,
                   onReorder: (oldIndex, newIndex) {
                     if (oldIndex < newIndex) {
@@ -117,8 +103,23 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
                         widget.exercise.goalProgress[index]);
                   },
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: Card(
+                    clipBehavior: Clip.hardEdge,
+                    child: InkWell(
+                      onTap: _addGoal,
+                      child: const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Icon(Icons.add),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -131,6 +132,16 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
         ),
       ],
     );
+  }
+
+  void _addGoal() async {
+    final goal = widget.exercise.goalProgress.lastOrNull?.goal.clone() ??
+        Goal.create(widget.exercise.executeMethod);
+    final newGoal = await goalDialog(context, goal);
+    if (newGoal != null) {
+      setState(() =>
+          widget.exercise.goalProgress.add(GoalProgress.fromGoal(newGoal)));
+    }
   }
 
   Widget _buildGoalProgressCard(GoalProgress goalProgress) {

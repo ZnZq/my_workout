@@ -19,70 +19,59 @@ class _ActivityExercisesDialogState extends State<ActivityExercisesDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Row(
-        children: [
-          const Text('Activity exercises'),
-          const Spacer(),
-          PopupMenuButton(
-            itemBuilder: (BuildContext context) {
-              return [
-                for (final method in ExerciseExecuteMethod.values)
-                  PopupMenuItem(
-                    value: method,
-                    child: IconText(
-                        text: method.name,
-                        icon: method.icon,
-                        iconColor: method.color),
-                  ),
-              ];
-            },
-            child: const Icon(Icons.add),
-            onSelected: (value) async {
-              final exersiseName =
-                  await textInputDialog(context, 'Enter execrcise name');
-              if (exersiseName == null) {
-                return;
-              }
-
-              final exercise = ActivityExercise(
-                name: exersiseName,
-                executeMethod: value,
-                goalProgress: [],
-              );
-
-              if (!context.mounted) {
-                return;
-              }
-
-              await showDialog(
-                context: context,
-                builder: (context) {
-                  return GoalProgressesDialog(exercise: exercise);
-                },
-              );
-
-              if (exercise.goalProgress.isNotEmpty) {
-                setState(() => widget.exercises.add(exercise));
-              }
-            },
-          ),
-        ],
-      ),
+      title: Text('Activity exercises'),
       content: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.sizeOf(context).height * 0.5,
-        child: ReorderableListView.builder(
-          itemCount: widget.exercises.length,
-          onReorder: (oldIndex, newIndex) {
-            if (oldIndex < newIndex) {
-              newIndex -= 1;
-            }
-            final exercise = widget.exercises.removeAt(oldIndex);
-            widget.exercises.insert(newIndex, exercise);
-          },
-          itemBuilder: (context, index) {
-            return _buildActivityExerciseCard(widget.exercises[index]);
-          },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ReorderableListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.exercises.length,
+                onReorder: (oldIndex, newIndex) {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final exercise = widget.exercises.removeAt(oldIndex);
+                  widget.exercises.insert(newIndex, exercise);
+                },
+                itemBuilder: (context, index) {
+                  return _buildActivityExerciseCard(widget.exercises[index]);
+                },
+              ),
+              if (widget.exercises.isNotEmpty) Divider(),
+              Row(
+                children: [
+                  for (final method in ExerciseExecuteMethod.values)
+                    Expanded(
+                      child: Card(
+                        clipBehavior: Clip.hardEdge,
+                        child: InkWell(
+                          onTap: () => _addExercise(context, method),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(12),
+                              child: Row(
+                                children: [
+                                  IconText(
+                                      text: method.name,
+                                      icon: method.icon,
+                                      iconColor: method.color),
+                                  Spacer(),
+                                  Icon(Icons.add),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
       actions: [
@@ -94,6 +83,34 @@ class _ActivityExercisesDialogState extends State<ActivityExercisesDialog> {
         ),
       ],
     );
+  }
+
+  void _addExercise(BuildContext context, ExerciseExecuteMethod method) async {
+    final exersiseName = await textInputDialog(context, 'Enter execrcise name');
+    if (exersiseName == null) {
+      return;
+    }
+
+    final exercise = ActivityExercise(
+      name: exersiseName,
+      executeMethod: method,
+      goalProgress: [],
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return GoalProgressesDialog(exercise: exercise);
+      },
+    );
+
+    if (exercise.goalProgress.isNotEmpty) {
+      setState(() => widget.exercises.add(exercise));
+    }
   }
 
   Widget _buildActivityExerciseCard(ActivityExercise exercise) {
