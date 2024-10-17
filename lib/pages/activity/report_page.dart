@@ -17,13 +17,13 @@ class ReportPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report'),
+        title: const Text('Report'),
         actions: [
           PopupMenuButton(
-            icon: Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert),
             itemBuilder: (context) {
               return [
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 'copy',
                   child: IconText(
                     icon: Icons.copy,
@@ -31,7 +31,7 @@ class ReportPage extends StatelessWidget {
                     iconColor: Colors.white,
                   ),
                 ),
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 'share',
                   child: IconText(
                     icon: Icons.share,
@@ -68,7 +68,7 @@ class ReportPage extends StatelessWidget {
 
     if (context.mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Copied")));
+          .showSnackBar(const SnackBar(content: Text("Copied")));
     }
   }
 

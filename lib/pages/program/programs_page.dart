@@ -14,7 +14,7 @@ class ProgramsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: WorkoutDrawer(),
+      drawer: const WorkoutDrawer(),
       appBar: WorkoutAppBar(
         title: const Text('Programs'),
         actions: [

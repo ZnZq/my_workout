@@ -47,7 +47,7 @@ class _GoalCardioDialogState extends State<GoalCardioDialog>
         child: GridView.count(
           shrinkWrap: true,
           crossAxisCount: 2,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           childAspectRatio: 1.25 / 1,
           children: [
             Opacity(

@@ -18,7 +18,7 @@ class ActvitiesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: WorkoutDrawer(),
+      drawer: const WorkoutDrawer(),
       appBar: WorkoutAppBar(
         title: const Text('Activities'),
         actions: [
@@ -98,7 +98,7 @@ class ActvitiesPage extends StatelessWidget {
             clipBehavior: Clip.hardEdge,
             color: Colors.green,
             child: ListTile(
-              title: Center(child: Text('Without program')),
+              title: const Center(child: Text('Without program')),
               onTap: () {
                 Navigator.of(context).pop(Program.empty());
               },

@@ -37,7 +37,7 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          Text('Goal progresses'),
+          const Text('Goal progresses'),
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.add),
@@ -98,7 +98,7 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
                 ],
                 onSelectionChanged: (value) {},
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Expanded(
                 child: ReorderableListView.builder(
                   itemCount: widget.exercise.goalProgress.length,
@@ -166,7 +166,7 @@ class _GoalProgressesDialogState extends State<GoalProgressesDialog> {
                 ? CardioGoalTile(
                     goal: goalProgress.goal.clone() as CardioGoal,
                     goalEdited: (goal) => _onGoalEdited(goalProgress, goal))
-                : Text('WTF???'),
+                : const Text('WTF???'),
       ),
     );
   }

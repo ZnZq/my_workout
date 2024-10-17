@@ -52,7 +52,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                 controller: nameController,
                 textCapitalization: TextCapitalization.words,
                 autofocus: widget.canChangeExecuteMethod,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                 ),
                 validator: (value) {
@@ -62,7 +62,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                   return null;
                 },
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   Expanded(
@@ -102,8 +102,8 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
               ),
               Row(
                 children: [
-                  Text('Goals'),
-                  Spacer(),
+                  const Text('Goals'),
+                  const Spacer(),
                   IconButton(
                     onPressed: () async {
                       final goal = goals.lastOrNull?.clone() ??
@@ -113,7 +113,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                         setState(() => goals.add(newGoal));
                       }
                     },
-                    icon: Icon(Icons.add),
+                    icon: const Icon(Icons.add),
                     iconSize: 20,
                   ),
                 ],
@@ -127,7 +127,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                     children: [
                       for (final pair in goals.indexed)
                         Card(
-                          margin: EdgeInsets.only(bottom: 8),
+                          margin: const EdgeInsets.only(bottom: 8),
                           clipBehavior: Clip.hardEdge,
                           child: Dismissible(
                             key: ValueKey(pair.$2.id),
@@ -154,7 +154,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
                                         goal: pair.$2 as CardioGoal,
                                         goalEdited: (goal) =>
                                             _onGoalEdited(goal, pair.$1))
-                                    : Text('WTF???'),
+                                    : const Text('WTF???'),
                           ),
                         ),
                     ],

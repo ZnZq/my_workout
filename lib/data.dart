@@ -22,80 +22,80 @@ class _UI {
 }
 
 class _Stat {
-  StatData duration = StatData(
+  StatData duration = const StatData(
     name: 'Duration',
     icon: Icons.timer_sharp,
     color: Colors.blue,
   );
-  StatRangeData heartRate = StatRangeData(
+  StatRangeData heartRate = const StatRangeData(
     name: 'Heart Rate',
     icon: Icons.favorite,
     color: Colors.red,
     minValue: 0,
     maxValue: 300,
   );
-  StatRangeData speed = StatRangeData(
+  StatRangeData speed = const StatRangeData(
     name: 'Speed',
     icon: Icons.speed,
     color: Colors.orange,
     minValue: 0,
     maxValue: 999,
   );
-  StatRangeData distance = StatRangeData(
+  StatRangeData distance = const StatRangeData(
     name: 'Distance',
     icon: Icons.location_on,
     color: Colors.indigo,
     minValue: 0,
     maxValue: 999,
   );
-  StatRangeData intensity = StatRangeData(
+  StatRangeData intensity = const StatRangeData(
     name: 'Intensity',
     icon: Icons.bolt,
     color: Colors.green,
     minValue: 0,
     maxValue: 999,
   );
-  StatRangeData level = StatRangeData(
+  StatRangeData level = const StatRangeData(
     name: 'Level',
     icon: Icons.leaderboard,
     color: Colors.yellow,
     minValue: 0,
     maxValue: 999,
   );
-  StatRangeData incline = StatRangeData(
+  StatRangeData incline = const StatRangeData(
     name: 'Incline',
     icon: Icons.trending_up,
     color: Colors.lightBlue,
     minValue: 0,
     maxValue: 999,
   );
-  StatRangeData sets = StatRangeData(
+  StatRangeData sets = const StatRangeData(
     name: 'Sets',
     icon: Icons.play_arrow,
     color: Colors.orange,
     minValue: 1,
     maxValue: 999,
   );
-  StatRangeData reps = StatRangeData(
+  StatRangeData reps = const StatRangeData(
     name: 'Reps',
     icon: Icons.repeat,
     color: Colors.green,
     minValue: 1,
     maxValue: 999,
   );
-  StatData rest = StatData(
+  StatData rest = const StatData(
     name: 'Rest',
     icon: Icons.timer_sharp,
     color: Colors.blue,
   );
-  StatRangeData weight = StatRangeData(
+  StatRangeData weight = const StatRangeData(
     name: 'Weight',
     icon: Icons.fitness_center,
     color: Colors.blue,
     minValue: 0,
     maxValue: 999,
   );
-  StatData cardio = StatData(
+  StatData cardio = const StatData(
     name: 'Cardio',
     icon: Icons.monitor_heart,
     color: Colors.green,

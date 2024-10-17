@@ -18,7 +18,7 @@ class InfoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Info'),
+      title: const Text('Info'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -28,7 +28,7 @@ class InfoDialog extends StatelessWidget {
               textCapitalization: TextCapitalization.words,
               controller: titleController,
               autofocus: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Title',
               ),
               autovalidateMode: AutovalidateMode.always,
@@ -46,7 +46,7 @@ class InfoDialog extends StatelessWidget {
                 autofocus: false,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Description',
                 ),
               ),
@@ -56,11 +56,11 @@ class InfoDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () => _save(context),
-          child: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     );

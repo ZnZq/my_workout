@@ -55,13 +55,13 @@ class _WorkoutExpansionState extends State<WorkoutExpansion>
             Text(widget.displayValue.isEmpty
                 ? widget.title
                 : '${widget.title}: ${widget.displayValue}'),
-            Spacer(),
+            const Spacer(),
             ...widget.actions,
             AnimatedBuilder(
               animation: _animationController,
               child: IconButton(
                 onPressed: _expandChanged,
-                icon: Icon(Icons.keyboard_arrow_down_sharp),
+                icon: const Icon(Icons.keyboard_arrow_down_sharp),
                 iconSize: 16,
               ),
               builder: (BuildContext context, Widget? child) {

@@ -21,7 +21,7 @@ class _ActivityExercisesDialogState extends State<ActivityExercisesDialog> {
     return AlertDialog(
       title: Row(
         children: [
-          Text('Activity exercises'),
+          const Text('Activity exercises'),
           const Spacer(),
           PopupMenuButton(
             itemBuilder: (BuildContext context) {

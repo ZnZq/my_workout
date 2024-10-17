@@ -77,10 +77,10 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
           title: Text(title),
           actions: [
             PopupMenuButton(
-              icon: Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert),
               itemBuilder: (context) {
                 return [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'rename',
                     child: IconText(
                       icon: Icons.edit,
@@ -88,7 +88,7 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
                       iconColor: Colors.white,
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'report',
                     child: IconText(
                       icon: Icons.receipt_long_outlined,
@@ -141,16 +141,16 @@ class _ProgramPageState extends State<ProgramPage> with WidgetsBindingObserver {
                   clipBehavior: Clip.hardEdge,
                   child: InkWell(
                     onTap: _addExercise,
-                    child: Center(
+                    child: const Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(16),
+                        padding: EdgeInsets.all(16),
                         child: Icon(Icons.add),
                       ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
           ),
         ),

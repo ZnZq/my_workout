@@ -38,8 +38,8 @@ class _DurationPickerDialogState extends State<DurationPickerDialog> {
   @override
   Widget build(BuildContext context) {
     final elevatedButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      minimumSize: Size(0, 0),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      minimumSize: const Size(0, 0),
       elevation: 0,
     );
 
@@ -65,7 +65,7 @@ class _DurationPickerDialogState extends State<DurationPickerDialog> {
                       onPressed: () => _addValue(-offset),
                       child: Text('-${formatDuration(offset)}'),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                   ]
                 ],
               ),
@@ -91,7 +91,7 @@ class _DurationPickerDialogState extends State<DurationPickerDialog> {
                       onPressed: () => _addValue(offset),
                       child: Text('+${formatDuration(offset)}'),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                   ]
                 ],
               ),
@@ -102,11 +102,11 @@ class _DurationPickerDialogState extends State<DurationPickerDialog> {
             : [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(_value),
-                  child: Text('Save'),
+                  child: const Text('Save'),
                 ),
               ],
       ),

@@ -18,7 +18,7 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
   int sets = 1;
   int reps = 1;
   double weight = 0;
-  Duration rest = Duration(minutes: 1);
+  Duration rest = const Duration(minutes: 1);
 
   final int minSets = 1;
   final int maxSets = 999;
@@ -48,7 +48,7 @@ class _GoalWeightDialogState extends State<GoalWeightDialog> {
         child: GridView.count(
           shrinkWrap: true,
           crossAxisCount: 2,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           childAspectRatio: 1 / 1,
           children: [
             NumStatTile<int>(

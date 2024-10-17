@@ -66,7 +66,7 @@ class WeightGoal extends Goal {
   int sets = 1;
   int reps = 1;
   double weight = 0;
-  Duration rest = Duration(minutes: 1);
+  Duration rest = const Duration(minutes: 1);
 
   WeightGoal({
     required this.sets,

@@ -9,12 +9,12 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       drawer: WorkoutDrawer(),
       appBar: WorkoutAppBar(
-        title: const Text('Main page'),
+        title: Text('Main page'),
       ),
-      body: const Center(
+      body: Center(
         child: Text('Hello, World!'),
       ),
     );

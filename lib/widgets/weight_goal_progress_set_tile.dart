@@ -33,27 +33,27 @@ class WeightGoalProgressSetTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(ui.stat.reps.icon, color: ui.stat.reps.color, size: 16),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text('${ui.stat.reps.name}: ${set.reps.toString()}'),
                   if (goal.goal.weight != 0) ...[
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Icon(
                       ui.stat.weight.icon,
                       color: ui.stat.weight.color,
                       size: 16,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                         '${ui.stat.weight.name}: ${set.weight.toStringAsFixed(1)}'),
                   ],
                   if (action != null) ...[
-                    Spacer(),
+                    const Spacer(),
                     action!,
                   ],
                 ],
               ),
             ),
-            Divider(height: 0),
+            const Divider(height: 0),
           ],
         ),
       ),

@@ -229,10 +229,10 @@ class _ActivityPageState extends State<ActivityPage>
           title: Text(title),
           actions: [
             PopupMenuButton(
-              icon: Icon(Icons.more_vert),
+              icon: const Icon(Icons.more_vert),
               itemBuilder: (context) {
                 return [
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'rename',
                     child: IconText(
                       icon: Icons.edit,
@@ -240,7 +240,7 @@ class _ActivityPageState extends State<ActivityPage>
                       iconColor: Colors.white,
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'report',
                     child: IconText(
                       icon: Icons.receipt_long_outlined,
@@ -275,7 +275,7 @@ class _ActivityPageState extends State<ActivityPage>
 
   Widget _buildActiveExercise(BuildContext context) {
     if (selectedGoal == null) {
-      return Center(child: Text('No goal selected'));
+      return const Center(child: Text('No goal selected'));
     }
 
     if (selectedGoal is WeightGoalProgress) {
@@ -292,7 +292,7 @@ class _ActivityPageState extends State<ActivityPage>
       );
     }
 
-    return Center(child: Text('Not implemented'));
+    return const Center(child: Text('Not implemented'));
   }
 
   Widget _buildActiveCardioGoalProgress(
@@ -395,14 +395,14 @@ class _ActivityPageState extends State<ActivityPage>
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.only(left: 12, right: 12),
+        padding: const EdgeInsets.only(left: 12, right: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (selectedExercise != null) ...[
               _buildSelectedExerciseCard(goal),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
             // _buildGoalProgressStats(goal),
             // SizedBox(height: 8),
@@ -422,16 +422,16 @@ class _ActivityPageState extends State<ActivityPage>
                     initCardioStopWatchTimer(goal);
                   });
                 },
-                child: Text('Start goal'),
+                child: const Text('Start goal'),
               ),
             if (goal.status == ProgressStatus.inProgress) ...[
               _buildCardioGoalProgressTimer(goal),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               if (gridItems.isNotEmpty) ...[
                 GridView.count(
                   shrinkWrap: true,
                   crossAxisCount: 3,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   childAspectRatio: 1 / 1,
                   children: gridItems,
                 ),
@@ -443,12 +443,12 @@ class _ActivityPageState extends State<ActivityPage>
                     stopWatchTimer!.onStopTimer();
                   });
                 },
-                child: Text('Complete goal'),
+                child: const Text('Complete goal'),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
             if (goal.status == ProgressStatus.completed) ...[
-              Center(child: Text('Goal completed'))
+              const Center(child: Text('Goal completed'))
             ]
           ],
         ),
@@ -468,11 +468,11 @@ class _ActivityPageState extends State<ActivityPage>
               color: ui.stat.duration.color,
               size: 16,
             ),
-            SizedBox(width: 4),
+            const SizedBox(width: 4),
             Text(goal.goal.duration == null
                 ? formatDuration(goal.actual.duration!)
                 : '${formatDuration(goal.actual.duration!)}/${formatDuration(goal.goal.duration!)}'),
-            Spacer(),
+            const Spacer(),
             CompactButton(
               text: stopWatchTimer!.isRunning ? 'Pause' : 'Play',
               backgroundColor: Colors.blue,
@@ -493,7 +493,7 @@ class _ActivityPageState extends State<ActivityPage>
             if (goal.goal.duration == null ||
                 goal.actual.duration!.inSeconds !=
                     goal.goal.duration!.inSeconds) ...[
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               CompactButton(
                 text: goal.goal.duration == null ? 'Reset' : 'Finish',
                 backgroundColor: Colors.indigo,
@@ -577,17 +577,17 @@ class _ActivityPageState extends State<ActivityPage>
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.only(left: 12, right: 12),
+        padding: const EdgeInsets.only(left: 12, right: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (selectedExercise != null) ...[
               _buildSelectedExerciseCard(goal, set: set),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
             ],
             _buildGoalProgressStats(goal),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             if (set.status == ProgressStatus.planned)
               ElevatedButton(
                 onPressed: () {
@@ -597,13 +597,13 @@ class _ActivityPageState extends State<ActivityPage>
                     set.weight = goal.goal.weight;
                   });
                 },
-                child: Text('Start set'),
+                child: const Text('Start set'),
               ),
             if (set.status == ProgressStatus.inProgress) ...[
               GridView.count(
                 shrinkWrap: true,
                 crossAxisCount: gridItems.length,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 childAspectRatio: gridItems.length == 1 ? 3 / 1 : 1.5 / 1,
                 children: gridItems,
               ),
@@ -614,7 +614,7 @@ class _ActivityPageState extends State<ActivityPage>
                     set.endRestAt = DateTime.now().add(goal.goal.rest);
                   });
                 },
-                child: Text('Complete set'),
+                child: const Text('Complete set'),
               ),
             ],
             if (set.status == ProgressStatus.completed) ...[
@@ -626,8 +626,8 @@ class _ActivityPageState extends State<ActivityPage>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Resting'),
-                        SizedBox(height: 12),
+                        const Text('Resting'),
+                        const SizedBox(height: 12),
                         Center(
                           child: TimerCountdown(
                             format: CountDownTimerFormat.hoursMinutesSeconds,
@@ -644,7 +644,7 @@ class _ActivityPageState extends State<ActivityPage>
                     ),
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
               ],
               if (set == goal.sets.last)
                 ElevatedButton(
@@ -660,19 +660,19 @@ class _ActivityPageState extends State<ActivityPage>
                       });
                     });
                   },
-                  child: Text('Add set'),
+                  child: const Text('Add set'),
                 ),
               set != goal.sets.last && set.endRestAt!.isAfter(DateTime.now())
                   ? ElevatedButton(
                       onPressed: () => _goNextSet(set, goal),
-                      child: Text('Next set'),
+                      child: const Text('Next set'),
                     )
                   : set != goal.sets.last
                       ? DelayedButton(
                           onPressed: () => _goNextSet(set, goal),
-                          child: Text('Next set'),
+                          child: const Text('Next set'),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
             ]
           ],
         ),
@@ -739,7 +739,7 @@ class _ActivityPageState extends State<ActivityPage>
                           selectedExercise!.executeMethod.icon,
                           color: selectedExercise!.executeMethod.color,
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Text(selectedExercise!.name),
                       ],
                     ),
@@ -762,8 +762,8 @@ class _ActivityPageState extends State<ActivityPage>
                 top: 0,
                 bottom: 0,
                 child: IconButton(
-                  padding: EdgeInsets.all(4),
-                  icon: Icon(Icons.close, size: 16),
+                  padding: const EdgeInsets.all(4),
+                  icon: const Icon(Icons.close, size: 16),
                   onPressed: () {
                     _runGoalProgress(null, null);
                   },
@@ -783,7 +783,7 @@ class _ActivityPageState extends State<ActivityPage>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Divider(height: 0),
+            const Divider(height: 0),
             Row(
               children: [
                 Expanded(
@@ -800,7 +800,7 @@ class _ActivityPageState extends State<ActivityPage>
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: const Icon(Icons.edit),
                   onPressed: () async {
                     await showDialog(
                       context: context,
@@ -833,8 +833,8 @@ class _ActivityPageState extends State<ActivityPage>
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
+            const Padding(
+              padding: EdgeInsets.only(top: 1),
               child: Divider(height: 0),
             ),
           ],
@@ -859,7 +859,7 @@ class _ActivityPageState extends State<ActivityPage>
       return _buildCardioExerciseView(context, exercise);
     }
 
-    return Center(child: Text('Not implemented'));
+    return const Center(child: Text('Not implemented'));
   }
 
   Widget _buildCardioExerciseView(
@@ -875,11 +875,11 @@ class _ActivityPageState extends State<ActivityPage>
           theme: TimelineThemeData(
             nodePosition: 0,
             indicatorPosition: 0,
-            connectorTheme: ConnectorThemeData(
+            connectorTheme: const ConnectorThemeData(
               thickness: 3.0,
               color: Color(0xffd3d3d3),
             ),
-            indicatorTheme: IndicatorThemeData(size: 24),
+            indicatorTheme: const IndicatorThemeData(size: 24),
           ),
           builder: TimelineTileBuilder.connected(
             itemCount: goals.length,
@@ -936,11 +936,11 @@ class _ActivityPageState extends State<ActivityPage>
           theme: TimelineThemeData(
             nodePosition: 0,
             indicatorPosition: 0,
-            connectorTheme: ConnectorThemeData(
+            connectorTheme: const ConnectorThemeData(
               thickness: 3.0,
               color: Color(0xffd3d3d3),
             ),
-            indicatorTheme: IndicatorThemeData(size: 24),
+            indicatorTheme: const IndicatorThemeData(size: 24),
           ),
           builder: TimelineTileBuilder.connected(
             itemCount: goals.length,
@@ -1003,7 +1003,7 @@ class _ActivityPageState extends State<ActivityPage>
     int index,
   ) {
     return Card(
-      margin: EdgeInsets.only(left: 12, right: 12, bottom: 8),
+      margin: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
       clipBehavior: Clip.hardEdge,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -1011,9 +1011,9 @@ class _ActivityPageState extends State<ActivityPage>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             _buildWeightGoalProgressHeader(exercise, goal),
-            Divider(),
+            const Divider(),
             _buildWeightGoalProgressBody(goal),
             _buildWeightGoalProgressAddSet(goal)
           ],
@@ -1038,10 +1038,10 @@ class _ActivityPageState extends State<ActivityPage>
             ));
           });
         },
-        child: Padding(
-          padding: const EdgeInsets.only(left: 2),
+        child: const Padding(
+          padding: EdgeInsets.only(left: 2),
           child: Row(
-            children: const [
+            children: [
               DotIndicator(
                 size: 16,
                 color: Colors.green,
@@ -1063,7 +1063,7 @@ class _ActivityPageState extends State<ActivityPage>
     int index,
   ) {
     return Card(
-      margin: EdgeInsets.only(left: 12, right: 12, bottom: 8),
+      margin: const EdgeInsets.only(left: 12, right: 12, bottom: 8),
       clipBehavior: Clip.hardEdge,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -1071,10 +1071,10 @@ class _ActivityPageState extends State<ActivityPage>
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             _buildCardioGoalProgressHeader(exercise, goal),
-            Divider(height: 0),
-            SizedBox(height: 8),
+            const Divider(height: 0),
+            const SizedBox(height: 8),
             _buildCardioGoalProgressBody(goal)
           ],
         ),
@@ -1154,7 +1154,7 @@ class _ActivityPageState extends State<ActivityPage>
           goal.sets.removeAt(index);
         });
       },
-      child: Icon(Icons.close, color: Colors.red, size: 16),
+      child: const Icon(Icons.close, color: Colors.red, size: 16),
     );
   }
 
@@ -1173,7 +1173,7 @@ class _ActivityPageState extends State<ActivityPage>
         );
         setState(() {});
       },
-      child: Icon(Icons.edit, color: Colors.blue, size: 16),
+      child: const Icon(Icons.edit, color: Colors.blue, size: 16),
     );
   }
 
@@ -1183,11 +1183,11 @@ class _ActivityPageState extends State<ActivityPage>
       child: FixedTimeline.tileBuilder(
         theme: TimelineThemeData(
           nodePosition: 0,
-          connectorTheme: ConnectorThemeData(
+          connectorTheme: const ConnectorThemeData(
             thickness: 1.5,
             color: Color(0xffd3d3d3),
           ),
-          indicatorTheme: IndicatorThemeData(size: 16),
+          indicatorTheme: const IndicatorThemeData(size: 16),
         ),
         builder: TimelineTileBuilder.connected(
           itemCount: goal.sets.length,
@@ -1292,6 +1292,6 @@ class _ActivityPageState extends State<ActivityPage>
       return CardioGoalProgressStats(goal: goal, wrapAlignment: wrapAlignment);
     }
 
-    return Center(child: Text('Not implemented'));
+    return const Center(child: Text('Not implemented'));
   }
 }

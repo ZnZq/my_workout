@@ -36,8 +36,8 @@ class _IntegerNumberPickerDialogState extends State<IntegerNumberPickerDialog> {
   @override
   Widget build(BuildContext context) {
     final elevatedButtonStyle = ElevatedButton.styleFrom(
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      minimumSize: Size(0, 0),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      minimumSize: const Size(0, 0),
       elevation: 0,
     );
 
@@ -74,8 +74,8 @@ class _IntegerNumberPickerDialogState extends State<IntegerNumberPickerDialog> {
                   itemHeight: 40,
                   itemWidth: 40,
                   value: _value,
-                  textStyle: TextStyle(fontSize: 14),
-                  selectedTextStyle: TextStyle(fontSize: 20),
+                  textStyle: const TextStyle(fontSize: 14),
+                  selectedTextStyle: const TextStyle(fontSize: 20),
                   minValue: widget.minValue,
                   maxValue: widget.maxValue,
                   onChanged: (value) => setState(() => _value = value),
@@ -108,11 +108,11 @@ class _IntegerNumberPickerDialogState extends State<IntegerNumberPickerDialog> {
             : [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(_value),
-                  child: Text('Save'),
+                  child: const Text('Save'),
                 ),
               ],
       ),
