@@ -25,7 +25,7 @@ class InfoDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
-              textCapitalization: TextCapitalization.words,
+              textCapitalization: TextCapitalization.sentences,
               controller: titleController,
               autofocus: true,
               decoration: const InputDecoration(
@@ -41,7 +41,7 @@ class InfoDialog extends StatelessWidget {
             ),
             if (showDescription)
               TextFormField(
-                textCapitalization: TextCapitalization.words,
+                textCapitalization: TextCapitalization.sentences,
                 controller: descriptionController,
                 autofocus: false,
                 keyboardType: TextInputType.multiline,

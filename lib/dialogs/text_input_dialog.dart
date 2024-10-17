@@ -29,7 +29,7 @@ class TextInputDialog extends StatelessWidget {
       content: TextField(
         controller: controller,
         autofocus: true,
-        textCapitalization: TextCapitalization.words,
+        textCapitalization: TextCapitalization.sentences,
       ),
       actions: [
         TextButton(

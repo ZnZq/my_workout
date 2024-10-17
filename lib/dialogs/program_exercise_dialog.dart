@@ -75,7 +75,7 @@ class _ProgramExerciseDialogState extends State<ProgramExerciseDialog> {
               children: [
                 TextFormField(
                   controller: nameController,
-                  textCapitalization: TextCapitalization.words,
+                  textCapitalization: TextCapitalization.sentences,
                   autofocus: widget.canChangeExecuteMethod,
                   decoration: const InputDecoration(
                     labelText: 'Name',
