@@ -45,7 +45,7 @@ class MainApp extends StatelessWidget {
           );
         }
         if (settings.name == ActivityPage.route && settings.arguments != null) {
-          final activity = settings.arguments as Activity;
+          final activity = settings.arguments as Map<String, dynamic>?;
           return MaterialPageRoute<Activity?>(
             builder: (context) => ActivityPage(activity: activity),
             settings: settings,

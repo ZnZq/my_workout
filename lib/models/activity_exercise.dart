@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:my_workout/data.dart';
+import 'package:my_workout/mixins/jsonable_mixin.dart';
 import 'package:my_workout/models/cardio_goal_progress.dart';
 import 'package:my_workout/models/enum/exercise_execute_method.dart';
 import 'package:my_workout/models/goal_progress.dart';
@@ -8,7 +9,7 @@ import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/utils.dart';
 
-class ActivityExercise with EquatableMixin {
+class ActivityExercise with EquatableMixin, JsonableMixin<ActivityExercise> {
   late final String id;
 
   String name = '';
@@ -47,14 +48,22 @@ class ActivityExercise with EquatableMixin {
     goalProgress = exercise.goals.map((e) => GoalProgress.fromGoal(e)).toList();
   }
 
-  ActivityExercise.fromJson(Map json) {
-    id = json['id'] ?? uuid.v4();
-    name = json['name'] as String;
-    executeMethod = ExerciseExecuteMethod.values[
+  @override
+  factory ActivityExercise.fromJson(Map json) {
+    final id = json['id'] ?? uuid.v4();
+    final name = json['name'] as String;
+    final executeMethod = ExerciseExecuteMethod.values[
         json.getOrDefault('executeMethod', ExerciseExecuteMethod.weight.index)];
-    goalProgress = (json['goalProgress'] as List<dynamic>)
+    final goalProgress = (json['goalProgress'] as List<dynamic>)
         .map((e) => GoalProgressFactory.fromJson(e))
         .toList();
+
+    return ActivityExercise(
+      id: id,
+      name: name,
+      executeMethod: executeMethod,
+      goalProgress: goalProgress,
+    );
   }
 
   void actualizeSets() {
@@ -65,6 +74,7 @@ class ActivityExercise with EquatableMixin {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

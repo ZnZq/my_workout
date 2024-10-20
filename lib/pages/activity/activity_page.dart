@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:my_workout/data.dart';
@@ -12,6 +13,7 @@ import 'package:my_workout/models/progress_status.dart';
 import 'package:my_workout/models/weight_goal_progress.dart';
 import 'package:my_workout/models/weight_goal_progress_set.dart';
 import 'package:my_workout/pages/activity/report_page.dart';
+import 'package:my_workout/restorable/restorable_list.dart';
 import 'package:my_workout/storage/storage.dart';
 import 'package:my_workout/utils.dart';
 import 'package:my_workout/widgets/activity_exercise_tab.dart';
@@ -27,41 +29,64 @@ import 'package:timelines/timelines.dart';
 
 class ActivityPage extends StatefulWidget {
   static const route = '/activity';
-  final Activity activity;
+  late final Activity activity;
 
-  const ActivityPage({super.key, required this.activity});
+  ActivityPage({super.key, Map<String, dynamic>? activity}) {
+    this.activity =
+        activity == null ? Activity.empty() : Activity.fromJson(activity);
+  }
 
   @override
   State<ActivityPage> createState() => _ActivityPageState();
 }
 
 class _ActivityPageState extends State<ActivityPage>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver, RestorationMixin {
   late TabController _tabController;
+
+  // RestorableCupertinoTabController _tabController =
+  //     RestorableCupertinoTabController();
 
   StopWatchTimer? stopWatchTimer;
   ActivityExercise? selectedExercise;
   GoalProgress? selectedGoal;
-  String title = '';
-  DateTime date = DateTime.now();
+  final RestorableString title = RestorableString('');
+  RestorableDateTime date = RestorableDateTime(DateTime.now());
 
-  final List<ActivityExercise> exercises = [];
+  final RestorableList<ActivityExercise> exercises =
+      RestorableList(ActivityExercise.fromJson, []);
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
 
-    date = widget.activity.date;
-    title = widget.activity.title;
-    exercises.addAll(widget.activity.exercises.map((e) => e.clone()));
-
     _tabController = TabController(length: exercises.length, vsync: this);
 
-    if (title.isEmpty) {
+    if (widget.activity.title.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _editInfo());
     }
 
     super.initState();
+  }
+
+  @override
+  String? get restorationId => 'activity_page';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(title, 'title');
+    registerForRestoration(date, 'date');
+    registerForRestoration(exercises, 'exercises');
+    // registerForRestoration(_tabController, 'tab_controller');
+
+    if (initialRestore) {
+      title.value = widget.activity.title;
+      date.value = widget.activity.date;
+      exercises.value =
+          widget.activity.exercises.map((e) => e.clone()).toList();
+
+      // _tabController.value = CupertinoTabController();
+    }
   }
 
   @override
@@ -109,10 +134,11 @@ class _ActivityPageState extends State<ActivityPage>
   }
 
   void _editInfo() async {
-    var programInfo = await infoDialog(context, title, showDescription: false);
+    var programInfo =
+        await infoDialog(context, title.value, showDescription: false);
     if (programInfo != null) {
       setState(() {
-        title = programInfo['title']!;
+        title.value = programInfo['title']!;
       });
     }
   }
@@ -126,24 +152,25 @@ class _ActivityPageState extends State<ActivityPage>
   Activity buildActivity(bool withClone) {
     return Activity(
       id: widget.activity.id,
-      date: date,
-      title: title,
+      date: date.value,
+      title: title.value,
       status: getActivityStatus(),
-      exercises:
-          withClone ? exercises.map((e) => e.clone()).toList() : exercises,
+      exercises: withClone
+          ? exercises.value.map((e) => e.clone()).toList()
+          : exercises.value,
     );
   }
 
   ProgressStatus getActivityStatus() {
-    if (exercises.isEmpty) {
+    if (exercises.value.isEmpty) {
       return ProgressStatus.planned;
     }
 
-    if (exercises.every((e) => e.status == ProgressStatus.completed)) {
+    if (exercises.value.every((e) => e.status == ProgressStatus.completed)) {
       return ProgressStatus.completed;
     }
 
-    if (exercises.any((e) => e.status != ProgressStatus.planned)) {
+    if (exercises.value.any((e) => e.status != ProgressStatus.planned)) {
       return ProgressStatus.inProgress;
     }
 
@@ -226,7 +253,7 @@ class _ActivityPageState extends State<ActivityPage>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(title.value),
           actions: [
             PopupMenuButton(
               icon: const Icon(Icons.more_vert),
@@ -794,7 +821,7 @@ class _ActivityPageState extends State<ActivityPage>
                     isScrollable: true,
                     tabAlignment: TabAlignment.center,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    tabs: exercises
+                    tabs: exercises.value
                         .map((e) => ActivityExerciseTab(activityExercise: e))
                         .toList(),
                   ),
@@ -805,13 +832,16 @@ class _ActivityPageState extends State<ActivityPage>
                     await showDialog(
                       context: context,
                       builder: (context) {
-                        return ActivityExercisesDialog(exercises: exercises);
+                        return ActivityExercisesDialog(
+                            exercises: exercises.value);
                       },
                     );
 
-                    for (var e in exercises) {
+                    for (var e in exercises.value) {
                       e.actualizeSets();
                     }
+
+                    exercises.notify();
 
                     setState(() {
                       final currentTabIndex = _tabController.index;
@@ -820,7 +850,7 @@ class _ActivityPageState extends State<ActivityPage>
                         vsync: this,
                       );
 
-                      if (exercises.isEmpty) {
+                      if (exercises.value.isEmpty) {
                         return;
                       }
 
@@ -842,8 +872,9 @@ class _ActivityPageState extends State<ActivityPage>
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            children:
-                exercises.map((e) => _buildExerciseView(context, e)).toList(),
+            children: exercises.value
+                .map((e) => _buildExerciseView(context, e))
+                .toList(),
           ),
         )
       ],

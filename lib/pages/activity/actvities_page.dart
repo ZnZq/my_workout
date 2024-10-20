@@ -119,6 +119,6 @@ class ActvitiesPage extends StatelessWidget {
 
   void _openActivity(BuildContext context, Activity activity) {
     Navigator.of(context)
-        .restorablePushNamed(ActivityPage.route, arguments: activity);
+        .restorablePushNamed(ActivityPage.route, arguments: activity.toJson());
   }
 }
