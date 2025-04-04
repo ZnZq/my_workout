@@ -23,7 +23,7 @@ import 'package:my_workout/widgets/num_stat_tile.dart';
 import 'package:my_workout/widgets/weight_goal_progress_set_tile.dart';
 import 'package:my_workout/widgets/weight_goal_progress_stats.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
-import 'package:timelines/timelines.dart';
+import 'package:timelines_plus/timelines_plus.dart';
 
 class ActivityPage extends StatefulWidget {
   static const route = '/activity';
